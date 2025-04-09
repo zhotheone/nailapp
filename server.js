@@ -100,6 +100,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/procedures', procedureRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/schedules', require('./routes/schedules'));
 
 // Serve index.html for all non-API routes (SPA support)
 app.get('*', (req, res, next) => {

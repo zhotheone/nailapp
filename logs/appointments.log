@@ -28,3 +28,29 @@
 {"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T16:16:47.206Z"}
 {"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T16:17:26.695Z"}
 {"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T16:17:34.365Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T16:24:29.679Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:24:29.680Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T16:28:37.028Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:28:37.028Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments?date=2025-04-09","timestamp":"2025-04-09T16:28:37.470Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:28:37.471Z"}
+{"level":"info","message":"Cache hit for __express__/api/appointments?date=2025-04-09","timestamp":"2025-04-09T16:28:53.205Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments?date=2025-04-16","timestamp":"2025-04-09T16:28:53.207Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:28:53.208Z"}
+{"level":"info","message":"Cache hit for __express__/api/appointments?date=2025-04-09","timestamp":"2025-04-09T16:28:53.670Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T16:39:59.491Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:39:59.491Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T16:43:06.536Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:43:06.537Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T16:47:01.824Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:47:01.824Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments?date=2025-04-16","timestamp":"2025-04-09T16:47:20.118Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T16:47:20.119Z"}
+{"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T16:49:02.758Z"}
+{"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T16:51:12.485Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T17:00:30.401Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T17:00:30.402Z"}
+{"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T17:02:05.686Z"}
+{"level":"info","message":"Cache hit for __express__/api/appointments","timestamp":"2025-04-09T17:03:09.529Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-09T17:06:42.952Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-09T17:06:42.952Z"}

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nail App - Statistics</title>
+  <title>Nail App - Статистика</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap">
@@ -17,10 +17,10 @@
         <h1>Nail App</h1>
       </div>
       <ul class="nav-links">
-        <li><a href="/"><i class="fas fa-calendar-alt"></i><span>Appointments</span></a></li>
-        <li><a href="/clients.html"><i class="fas fa-users"></i><span>Clients</span></a></li>
-        <li><a href="/procedures.html"><i class="fas fa-spa"></i><span>Procedures</span></a></li>
-        <li><a href="/stats.html" class="active"><i class="fas fa-chart-bar"></i><span>Stats</span></a></li>
+        <li><a href="/"><i class="fas fa-calendar-alt"></i><span>Записи</span></a></li>
+        <li><a href="/clients.html"><i class="fas fa-users"></i><span>Клієнти</span></a></li>
+        <li><a href="/procedures.html"><i class="fas fa-spa"></i><span>Процедури</span></a></li>
+        <li><a href="/stats.html" class="active"><i class="fas fa-chart-bar"></i><span>Статистика</span></a></li>
       </ul>
     </div>
   </nav>
@@ -29,7 +29,7 @@
     <!-- Summary Stats -->
     <section class="content-section stats-section">
       <div class="section-header">
-        <h2>Dashboard</h2>
+        <h2>Дашборд</h2>
       </div>
       
       <div class="loader" id="stats-loader">
@@ -41,7 +41,7 @@
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-users"></i></div>
             <div class="stat-data">
-              <h3>Total Clients</h3>
+              <h3>Всього клієнтів</h3>
               <div class="stat-value" id="total-clients">0</div>
             </div>
           </div>
@@ -49,7 +49,7 @@
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-spa"></i></div>
             <div class="stat-data">
-              <h3>Total Procedures</h3>
+              <h3>Всього процедур</h3>
               <div class="stat-value" id="total-procedures">0</div>
             </div>
           </div>
@@ -57,28 +57,28 @@
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
             <div class="stat-data">
-              <h3>Total Appointments</h3>
+              <h3>Всього записів</h3>
               <div class="stat-value" id="total-appointments">0</div>
             </div>
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-icon"><i class="fas fa-hryvnia"></i></div>
             <div class="stat-data">
-              <h3>Total Revenue</h3>
-              <div class="stat-value" id="total-revenue">$0</div>
+              <h3>Загальний дохід</h3>
+              <div class="stat-value" id="total-revenue">₴0</div>
             </div>
           </div>
         </div>
         
         <div class="stats-charts">
           <div class="chart-container">
-            <h3>Appointment Status</h3>
+            <h3>Статус записів</h3>
             <canvas id="status-chart"></canvas>
           </div>
           
           <div class="chart-container">
-            <h3>Monthly Revenue</h3>
+            <h3>Місячний дохід</h3>
             <canvas id="revenue-chart"></canvas>
           </div>
         </div>
@@ -88,7 +88,7 @@
     <!-- Popular Procedures -->
     <section class="content-section stats-section">
       <div class="section-header">
-        <h2>Popular Procedures</h2>
+        <h2>Популярні процедури</h2>
       </div>
       
       <div id="popular-procedures-list" class="data-list">
@@ -99,7 +99,7 @@
     <!-- Frequent Clients -->
     <section class="content-section stats-section">
       <div class="section-header">
-        <h2>Frequent Clients</h2>
+        <h2>Постійні клієнти</h2>
       </div>
       
       <div id="frequent-clients-list" class="data-list">
@@ -110,7 +110,7 @@
     <!-- Client Retention -->
     <section class="content-section stats-section">
       <div class="section-header">
-        <h2>Client Retention</h2>
+        <h2>Утримання клієнтів</h2>
       </div>
       
       <div class="retention-chart-container">
@@ -126,19 +126,19 @@
         <div class="fab-option-icon">
           <i class="fas fa-calendar-plus"></i>
         </div>
-        <span class="fab-option-label">New Appointment</span>
+        <span class="fab-option-label">Новий запис</span>
       </div>
       <div class="fab-option fab-option-client fab-client">
         <div class="fab-option-icon">
           <i class="fas fa-user-plus"></i>
         </div>
-        <span class="fab-option-label">New Client</span>
+        <span class="fab-option-label">Новий клієнт</span>
       </div>
       <div class="fab-option fab-option-procedure fab-procedure">
         <div class="fab-option-icon">
           <i class="fas fa-spa"></i>
         </div>
-        <span class="fab-option-label">New Procedure</span>
+        <span class="fab-option-label">Нова процедура</span>
       </div>
     </div>
     <div class="fab-main">
@@ -146,7 +146,7 @@
     </div>
   </div>
 
-  <script src="/js/navbar.js"></script>
+  <script src="/js/utils.js"></script>
   <script src="/js/stats.js"></script>
 </body>
 </html>

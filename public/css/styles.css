@@ -342,10 +342,11 @@ body {
 }
 
 /* Time Slots within Days */
+/* Оновлений стиль для часових слотів */
 .time-slot {
-  padding: var(--spacing-sm);
+  padding: var(--spacing-md);
   margin-bottom: var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -355,21 +356,84 @@ body {
 }
 
 .time-slot:hover {
-  transform: translateX(3px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-2);
 }
 
+/* Стилі для доступних слотів */
 .time-slot.available {
   border-left: 3px solid var(--success-color);
 }
 
+/* Стилі для заброньованих слотів - схожі на картки */
 .time-slot.booked {
   border-left: 3px solid var(--info-color);
+  padding: var(--spacing-md);
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Колір фону для різних статусів */
+.time-slot.booked .slot-appointment {
+  width: 100%;
+  padding: var(--spacing-sm) 0;
+}
+
+/* Статус: очікує - світло-жовтий фон */
+.time-slot.booked .slot-appointment .status-pending,
+.time-slot.booked .status-pending {
+  background-color: rgba(246, 193, 119, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+  width: 100%;
+  text-align: center;
+}
+
+/* Статус: підтверджено - світло-блакитний фон */
+.time-slot.booked .slot-appointment .status-confirmed,
+.time-slot.booked .status-confirmed {
+  background-color: rgba(156, 207, 216, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+  width: 100%;
+  text-align: center;
+}
+
+/* Статус: завершено - світло-зелений фон */
+.time-slot.booked .slot-appointment .status-completed,
+.time-slot.booked .status-completed {
+  background-color: rgba(62, 143, 176, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+  width: 100%;
+  text-align: center;
+}
+
+/* Статус: скасовано - світло-червоний фон */
+.time-slot.booked .slot-appointment .status-cancelled,
+.time-slot.booked .status-cancelled {
+  background-color: rgba(235, 111, 146, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+  width: 100%;
+  text-align: center;
 }
 
 .slot-time {
   font-weight: bold;
   color: var(--subtle);
+  width: 100%;
+  border-bottom: 1px dashed var(--muted);
+  padding-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
 }
 
 .slot-appointment {
@@ -380,10 +444,18 @@ body {
 .slot-client, 
 .slot-procedure {
   margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.slot-client {
+  color: var(--iris);
+}
+
+.slot-procedure {
+  color: var(--foam);
 }
 
 .btn-book {
-  padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 0.8rem;
   background-color: var(--primary-color);
   color: var(--base);
@@ -1004,6 +1076,480 @@ body {
   border-radius: var(--border-radius-md);
   margin: var(--spacing-md) 0;
   box-shadow: var(--shadow-1);
+}
+
+/* Card Format for Detail Views */
+.appointment-detail-card,
+.client-detail-card,
+.procedure-detail-card {
+  overflow: hidden;
+}
+
+.appointment-details,
+.client-details,
+.procedure-details {
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-1);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px dashed var(--muted);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: var(--subtle);
+}
+
+.detail-value {
+  color: var(--text);
+}
+
+.client-history,
+.procedure-stats {
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-1);
+}
+
+.client-history h3,
+.procedure-stats h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  position: relative;
+}
+
+.client-history h3::after,
+.procedure-stats h3::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background-color: var(--primary-color);
+  border-radius: 3px;
+  transition: width var(--animation-speed-medium) ease;
+}
+
+.client-history h3:hover::after,
+.procedure-stats h3:hover::after {
+  width: 100%;
+}
+
+.client-appointments,
+.procedure-usage {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: var(--spacing-sm);
+}
+
+.appointment-item,
+.usage-item {
+  background-color: var(--surface);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-1);
+  transition: all var(--animation-speed-medium) ease;
+}
+
+.appointment-item:hover,
+.usage-item:hover {
+  transform: translateX(5px);
+  box-shadow: var(--shadow-2);
+}
+
+.appointment-date,
+.usage-date {
+  color: var(--foam);
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.appointment-procedure,
+.usage-client {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.appointment-price,
+.usage-price {
+  color: var(--gold);
+  font-size: 0.9rem;
+  margin-top: var(--spacing-xs);
+}
+
+/* Базові кольори тексту для статусів */
+.status-pending {
+  color: var(--gold);
+}
+
+.status-confirmed {
+  color: var(--foam);
+}
+
+.status-completed {
+  color: var(--pine);
+}
+
+.status-cancelled {
+  color: var(--love);
+}
+
+/* Додаткові стилі для статусів з кольоровим фоном */
+/* Для деталей запису */
+.detail-row .status-pending {
+  background-color: rgba(246, 193, 119, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+}
+
+.detail-row .status-confirmed {
+  background-color: rgba(156, 207, 216, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+}
+
+.detail-row .status-completed {
+  background-color: rgba(62, 143, 176, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+}
+
+.detail-row .status-cancelled {
+  background-color: rgba(235, 111, 146, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+}
+
+/* Для історії відвідувань та використання */
+.appointment-item .status-pending,
+.usage-item .status-pending {
+  background-color: rgba(246, 193, 119, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+}
+
+.appointment-item .status-confirmed,
+.usage-item .status-confirmed {
+  background-color: rgba(156, 207, 216, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+}
+
+.appointment-item .status-completed,
+.usage-item .status-completed {
+  background-color: rgba(62, 143, 176, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+}
+
+.appointment-item .status-cancelled,
+.usage-item .status-cancelled {
+  background-color: rgba(235, 111, 146, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: inline-block;
+  margin-top: var(--spacing-xs);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+/* Available Times */
+.available-times {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.time-option {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--overlay);
+  border: 1px solid var(--muted);
+  border-radius: var(--border-radius-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--animation-speed-medium) ease;
+}
+
+.time-option:hover {
+  background-color: var(--primary-color);
+  color: var(--base);
+}
+
+/* Status Options */
+.status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.status-option {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--animation-speed-medium) ease;
+  box-shadow: var(--shadow-1);
+  text-align: center;
+}
+
+.status-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+
+.status-option.status-pending {
+  background-color: rgba(246, 193, 119, 0.2);
+  border: 1px solid var(--gold);
+}
+
+.status-option.status-confirmed {
+  background-color: rgba(156, 207, 216, 0.2);
+  border: 1px solid var(--foam);
+}
+
+.status-option.status-completed {
+  background-color: rgba(62, 143, 176, 0.2);
+  border: 1px solid var(--pine);
+}
+
+.status-option.status-cancelled {
+  background-color: rgba(235, 111, 146, 0.2);
+  border: 1px solid var(--love);
+}
+
+/* Data Cards (Client/Procedure List) */
+.data-card {
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-1);
+  transition: all var(--animation-speed-medium) ease;
+}
+
+.data-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+}
+
+.data-info {
+  flex: 1;
+}
+
+.client-name h3,
+.procedure-name h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.client-rating {
+  color: var(--gold);
+  margin-bottom: var(--spacing-xs);
+}
+
+.client-contact,
+.procedure-details {
+  color: var(--subtle);
+  font-size: 0.9rem;
+}
+
+.client-contact i,
+.procedure-details i {
+  margin-right: var(--spacing-xs);
+}
+
+.data-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* Statistics Cards */
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.stat-card {
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-1);
+  transition: all var(--animation-speed-medium) ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  background-color: var(--surface);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-md);
+}
+
+.stat-icon i {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.stat-data h3 {
+  font-size: 0.9rem;
+  color: var(--subtle);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stats-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.chart-container {
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-1);
+  height: 300px;
+}
+
+.chart-container h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+/* Popular Procedures & Frequent Clients */
+.popular-procedure-card,
+.frequent-client-card {
+  padding: var(--spacing-md);
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-1);
+  transition: all var(--animation-speed-medium) ease;
+}
+
+.popular-procedure-card:hover,
+.frequent-client-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+}
+
+.popular-procedure-rank,
+.frequent-client-rank {
+  background-color: var(--primary-color);
+  color: var(--base);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: var(--spacing-md);
+}
+
+.popular-procedure-info,
+.frequent-client-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.popular-procedure-info h3,
+.frequent-client-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  margin-right: var(--spacing-md);
+}
+
+.procedure-price,
+.client-visit-count {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.procedure-count {
+  color: var(--foam);
+  font-size: 0.9rem;
+}
+
+.client-trust-rating {
+  color: var(--gold);
+  margin-left: var(--spacing-md);
+}
+
+.retention-chart-container {
+  background-color: var(--overlay);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-1);
+  height: 300px;
+}
+
+/* Emoji styling */
+.emoji {
+  font-size: 1.2em;
+  margin-right: 5px;
 }
 
 /* Responsive Design */

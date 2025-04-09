@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const appointmentModal = document.getElementById('appointment-modal');
   const appointmentForm = document.getElementById('appointment-form');
   const modalTitle = document.getElementById('modal-title');
-  const closeModal = document.querySelectorAll('.close-modal');
-  const closeBtns = document.querySelectorAll('.close-btn');
   const statusFilter = document.getElementById('status-filter');
   const dateFilter = document.getElementById('date-filter');
   const clearFiltersBtn = document.getElementById('clear-filters');
@@ -37,11 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextMonthBtn = document.getElementById('next-month-btn');
   const currentMonthYear = document.getElementById('current-month-year');
   const calendarContainer = document.getElementById('calendar-container');
-  
-  // FAB elements
-  const fabMain = document.querySelector('.fab-main');
-  const fabOptions = document.querySelector('.fab-options');
-  const fabPrimary = document.querySelector('.fab-option-primary');
   
   // Schedule elements
   const scheduleModal = document.getElementById('schedule-modal');
@@ -78,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // Check if we're on the appointments page
       if (!appointmentsLoader) {
-        console.log('Not on appointments page, skipping appointments initialization');
+        console.log('Не на сторінці записів, пропускаємо ініціалізацію записів');
         return;
       }
       
@@ -92,15 +85,34 @@ document.addEventListener('DOMContentLoaded', () => {
       setupEventListeners();
       renderWeeklyView(currentDate);
       updateMonthCalendar(currentDate);
+      
+      // Check URL parameters for pre-selected client or procedure
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('client')) {
+        const clientId = urlParams.get('client');
+        if (clientSelect) clientSelect.value = clientId;
+      }
+      if (urlParams.get('procedure')) {
+        const procedureId = urlParams.get('procedure');
+        if (procedureSelect) {
+          procedureSelect.value = procedureId;
+          
+          // Auto-fill price if procedure is selected
+          const selectedOption = procedureSelect.options[procedureSelect.selectedIndex];
+          if (selectedOption && selectedOption.dataset.price && priceInput) {
+            priceInput.value = selectedOption.dataset.price;
+          }
+        }
+      }
     } catch (error) {
-      console.error('Initialization error:', error);
-      showMessage('error', 'Failed to initialize the application. Please try again later.');
+      console.error('Помилка ініціалізації:', error);
+      showMessage('error', 'Не вдалося ініціалізувати додаток. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Load appointments from API
   async function loadAppointments(filters = {}) {
-    showLoader();
+    showLoader(appointmentsLoader);
     try {
       let url = API.appointments;
       
@@ -135,10 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMonthCalendar(selectedDate);
       }
     } catch (error) {
-      console.error('Error loading appointments:', error);
-      showMessage('error', 'Failed to load appointments. Please try again later.');
+      console.error('Помилка завантаження записів:', error);
+      showMessage('error', 'Не вдалося завантажити записи. Будь ласка, спробуйте пізніше.');
     } finally {
-      hideLoader();
+      hideLoader(appointmentsLoader);
     }
   }
   
@@ -154,8 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
       schedules = await response.json();
       return schedules;
     } catch (error) {
-      console.error('Error loading schedules:', error);
-      showMessage('error', 'Failed to load schedules. Please try again later.');
+      console.error('Помилка завантаження розкладу:', error);
+      showMessage('error', 'Не вдалося завантажити розклад. Будь ласка, спробуйте пізніше.');
       return [];
     }
   }
@@ -172,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
       clients = await response.json();
       populateClientSelect();
     } catch (error) {
-      console.error('Error loading clients:', error);
-      showMessage('error', 'Failed to load clients. Please try again later.');
+      console.error('Помилка завантаження клієнтів:', error);
+      showMessage('error', 'Не вдалося завантажити клієнтів. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -189,14 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
       procedures = await response.json();
       populateProcedureSelect();
     } catch (error) {
-      console.error('Error loading procedures:', error);
-      showMessage('error', 'Failed to load procedures. Please try again later.');
+      console.error('Помилка завантаження процедур:', error);
+      showMessage('error', 'Не вдалося завантажити процедури. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Populate client select options
   function populateClientSelect() {
-    clientSelect.innerHTML = '<option value="">Select a client</option>';
+    if (!clientSelect) return;
+    
+    clientSelect.innerHTML = '<option value="">Оберіть клієнта</option>';
     clients.forEach(client => {
       const option = document.createElement('option');
       option.value = client._id;
@@ -207,11 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Populate procedure select options
   function populateProcedureSelect() {
-    procedureSelect.innerHTML = '<option value="">Select a procedure</option>';
+    if (!procedureSelect) return;
+    
+    procedureSelect.innerHTML = '<option value="">Оберіть процедуру</option>';
     procedures.forEach(procedure => {
       const option = document.createElement('option');
       option.value = procedure._id;
-      option.textContent = `${procedure.name} - $${procedure.price}`;
+      option.textContent = `${procedure.name} - ${procedure.price} грн`;
       option.dataset.price = procedure.price;
       procedureSelect.appendChild(option);
     });
@@ -219,45 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set up event listeners
   function setupEventListeners() {
-    // FAB functionality
-    if (fabMain) {
-      fabMain.addEventListener('click', () => {
-        fabOptions.classList.toggle('active');
-      });
-    }
-    
-    if (fabPrimary) {
-      fabPrimary.addEventListener('click', () => {
-        resetForm();
-        modalTitle.textContent = 'New Appointment';
-        currentAppointmentId = null;
-        openModal(appointmentModal);
-        fabOptions.classList.remove('active');
-      });
-    }
-    
-    // Close modals
-    closeModal.forEach(closeBtn => {
-      closeBtn.addEventListener('click', function() {
-        const modal = this.closest('.modal');
-        closeModalHandler(modal);
-      });
-    });
-    
-    closeBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const modal = this.closest('.modal');
-        closeModalHandler(modal);
-      });
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-      if (e.target.classList.contains('modal')) {
-        closeModalHandler(e.target);
-      }
-    });
-    
     // Form submission
     if (appointmentForm) {
       appointmentForm.addEventListener('submit', handleFormSubmit);
@@ -322,7 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Schedule management
     if (manageScheduleBtn) {
-      manageScheduleBtn.addEventListener('click', () => openModal(scheduleModal));
+      manageScheduleBtn.addEventListener('click', () => {
+        populateScheduleForm();
+        openModal(scheduleModal);
+      });
     }
     
     if (scheduleForm) {
@@ -361,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const daySchedule = schedules.find(s => s.dayOfWeek === dayOfWeek);
     
     if (!daySchedule || daySchedule.isWeekend || !daySchedule.timeTable) {
-      availableTimesContainer.innerHTML = '<p>No available times for this day</p>';
+      availableTimesContainer.innerHTML = '<p>На цей день немає доступних часів</p>';
       return;
     }
     
@@ -399,14 +379,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // If no available times were added
     if (availableTimesContainer.children.length === 0) {
-      availableTimesContainer.innerHTML = '<p>No available times for this day</p>';
+      availableTimesContainer.innerHTML = '<p>На цей день немає доступних часів</p>';
     }
   }
   
   // Add 'Book' button functionality
   function handleBookButtonClick(date, time) {
     resetForm();
-    modalTitle.textContent = 'New Appointment';
+    modalTitle.textContent = 'Новий запис';
     currentAppointmentId = null;
     
     // Set the date and time in the form
@@ -443,36 +423,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Build the details HTML
     let detailsHTML = `
       <div class="detail-row">
-        <div class="detail-label">Client:</div>
-        <div class="detail-value">${client ? `${client.name} ${client.surName}` : 'Unknown Client'}</div>
+        <div class="detail-label">Клієнт:</div>
+        <div class="detail-value">${client ? `${client.name} ${client.surName}` : 'Невідомий клієнт'}</div>
       </div>
       <div class="detail-row">
-        <div class="detail-label">Procedure:</div>
-        <div class="detail-value">${procedure ? procedure.name : 'Unknown Procedure'}</div>
+        <div class="detail-label">Процедура:</div>
+        <div class="detail-value">${procedure ? procedure.name : 'Невідома процедура'}</div>
       </div>
       <div class="detail-row">
-        <div class="detail-label">Date:</div>
-        <div class="detail-value">${dateFormatted}</div>
+        <div class="detail-label">Дата:</div>
+        <div class="detail-value">📅 ${dateFormatted}</div>
       </div>
       <div class="detail-row">
-        <div class="detail-label">Time:</div>
-        <div class="detail-value">${timeFormatted}</div>
+        <div class="detail-label">Час:</div>
+        <div class="detail-value">⏰ ${timeFormatted}</div>
       </div>
       <div class="detail-row">
-        <div class="detail-label">Price:</div>
-        <div class="detail-value">$${appointment.price.toFixed(2)}</div>
+        <div class="detail-label">Ціна:</div>
+        <div class="detail-value">💰 ${appointment.price.toFixed(2)} грн</div>
       </div>
       <div class="detail-row">
-        <div class="detail-label">Status:</div>
-        <div class="detail-value status-${appointment.status}">${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}</div>
+        <div class="detail-label">Статус:</div>
+        <div class="detail-value status-${appointment.status}">${getStatusEmoji(appointment.status)} ${getStatusText(appointment.status)}</div>
       </div>
     `;
     
     if (appointment.finalPrice) {
       detailsHTML += `
         <div class="detail-row">
-          <div class="detail-label">Final Price:</div>
-          <div class="detail-value">$${appointment.finalPrice.toFixed(2)}</div>
+          <div class="detail-label">Остаточна ціна:</div>
+          <div class="detail-value">💰 ${appointment.finalPrice.toFixed(2)} грн</div>
         </div>
       `;
     }
@@ -480,8 +460,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (appointment.notes) {
       detailsHTML += `
         <div class="detail-row">
-          <div class="detail-label">Notes:</div>
-          <div class="detail-value">${appointment.notes}</div>
+          <div class="detail-label">Нотатки:</div>
+          <div class="detail-value">📝 ${appointment.notes}</div>
         </div>
       `;
     }
@@ -503,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selectedAppointment) return;
     
     currentAppointmentId = selectedAppointment._id;
-    modalTitle.textContent = 'Edit Appointment';
+    modalTitle.textContent = 'Редагувати запис';
     
     // Fill the form with appointment data
     clientSelect.value = selectedAppointment.clientId._id || selectedAppointment.clientId;
@@ -528,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populateAvailableTimes();
     
     // Close detail modal and open edit modal
-    closeModalHandler(appointmentDetailModal);
+    closeModal(appointmentDetailModal);
     openModal(appointmentModal);
   }
   
@@ -544,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (status !== selectedAppointment.status) {
         statusHTML += `
           <button class="status-option status-${status}" data-status="${status}">
-            ${status.charAt(0).toUpperCase() + status.slice(1)}
+            ${getStatusEmoji(status)} ${getStatusText(status)}
           </button>
         `;
       }
@@ -586,11 +566,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Reload appointments and close the modal
       await loadAppointments();
-      closeModalHandler(appointmentDetailModal);
-      showMessage('success', 'Appointment status updated successfully!');
+      closeModal(appointmentDetailModal);
+      showMessage('success', 'Статус запису успішно оновлено!');
     } catch (error) {
-      console.error('Error changing appointment status:', error);
-      showMessage('error', 'Failed to update appointment status. Please try again later.');
+      console.error('Помилка зміни статусу запису:', error);
+      showMessage('error', 'Не вдалося оновити статус запису. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -598,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function cancelSelectedAppointment() {
     if (!selectedAppointment) return;
     
-    const confirm = window.confirm('Are you sure you want to cancel this appointment?');
+    const confirm = window.confirm('Ви впевнені, що хочете скасувати цей запис?');
     if (!confirm) return;
     
     try {
@@ -616,11 +596,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Reload appointments and close the modal
       await loadAppointments();
-      closeModalHandler(appointmentDetailModal);
-      showMessage('success', 'Appointment cancelled successfully!');
+      closeModal(appointmentDetailModal);
+      showMessage('success', 'Запис успішно скасовано!');
     } catch (error) {
-      console.error('Error cancelling appointment:', error);
-      showMessage('error', 'Failed to cancel appointment. Please try again later.');
+      console.error('Помилка скасування запису:', error);
+      showMessage('error', 'Не вдалося скасувати запис. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -670,7 +650,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const startFormatted = formatDate(startOfWeek);
     const endFormatted = formatDate(endOfWeek);
-    currentWeekRange.textContent = `${startFormatted} - ${endFormatted}`;
+    if (currentWeekRange) currentWeekRange.textContent = `${startFormatted} - ${endFormatted}`;
+    
+    if (!daysContainer) return;
     
     daysContainer.innerHTML = '';
     
@@ -699,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="weekend-message">
             <i class="fas fa-umbrella-beach"></i>
-            <p>Today is the weekend! Happy resting.</p>
+            <p>Сьогодні вихідний! Гарного відпочинку.</p>
           </div>
         `;
       } else {
@@ -725,7 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const daySchedule = schedules.find(s => s.dayOfWeek === dayOfWeek);
     
     if (!daySchedule || !daySchedule.timeTable) {
-      return `<div class="no-slots">No time slots available</div>`;
+      return `<div class="no-slots">Немає доступних часових слотів</div>`;
     }
     
     let slotsHTML = '';
@@ -744,34 +726,38 @@ document.addEventListener('DOMContentLoaded', () => {
                  appTime.getMinutes() === parseInt(minutes);
         });
         
-        let slotClass = 'available';
-        let slotContent = `<span class="slot-time">${timeSlot}</span>`;
-        
         if (appointment) {
-          slotClass = 'booked';
+          // Booked slot - display as a card
           const client = appointment.clientId && typeof appointment.clientId === 'object' 
             ? `${appointment.clientId.name} ${appointment.clientId.surName}`
-            : 'Client';
+            : 'Клієнт';
           const procedure = appointment.procedureId && typeof appointment.procedureId === 'object'
             ? appointment.procedureId.name
-            : 'Procedure';
+            : 'Процедура';
           
-          slotContent += `
-            <div class="slot-appointment" data-id="${appointment._id}">
-              <div class="slot-client">${client}</div>
-              <div class="slot-procedure">${procedure}</div>
-              <div class="slot-status status-${appointment.status}">${appointment.status}</div>
+          slotsHTML += `
+            <div class="time-slot booked">
+              <div class="slot-time">⏰ ${timeSlot}</div>
+              <div class="slot-appointment" data-id="${appointment._id}">
+                <div class="slot-client"><i class="fas fa-user"></i> ${client}</div>
+                <div class="slot-procedure"><i class="fas fa-spa"></i> ${procedure}</div>
+                <div class="status-${appointment.status}">${getStatusEmoji(appointment.status)} ${getStatusText(appointment.status)}</div>
+              </div>
             </div>
           `;
         } else {
-          slotContent += `<button class="btn btn-book" data-date="${formatISODate(slotDate)}" data-time="${timeSlot}">Book</button>`;
+          // Available slot - simpler display
+          slotsHTML += `
+            <div class="time-slot available">
+              <span class="slot-time">⏰ ${timeSlot}</span>
+              <button class="btn btn-book" data-date="${formatISODate(slotDate)}" data-time="${timeSlot}"><i class="fas fa-plus"></i> Записати</button>
+            </div>
+          `;
         }
-        
-        slotsHTML += `<div class="time-slot ${slotClass}">${slotContent}</div>`;
       }
     }
     
-    return slotsHTML || `<div class="no-slots">No time slots available</div>`;
+    return slotsHTML || `<div class="no-slots">Немає доступних часових слотів</div>`;
   }
   
   // After rendering the weekly view, add event listeners to the slots
@@ -802,7 +788,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const year = date.getFullYear();
     const month = date.getMonth();
     
-    currentMonthYear.textContent = `${getMonthName(month)} ${year}`;
+    if (currentMonthYear) {
+      currentMonthYear.textContent = `${getMonthName(month)} ${year}`;
+    }
+    
+    if (!calendarContainer) return;
     
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -813,13 +803,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let calendarHTML = `
       <div class="calendar-header">
-        <div class="calendar-day">Mon</div>
-        <div class="calendar-day">Tue</div>
-        <div class="calendar-day">Wed</div>
-        <div class="calendar-day">Thu</div>
-        <div class="calendar-day">Fri</div>
-        <div class="calendar-day">Sat</div>
-        <div class="calendar-day">Sun</div>
+        <div class="calendar-day">Пн</div>
+        <div class="calendar-day">Вт</div>
+        <div class="calendar-day">Ср</div>
+        <div class="calendar-day">Чт</div>
+        <div class="calendar-day">Пт</div>
+        <div class="calendar-day">Сб</div>
+        <div class="calendar-day">Нд</div>
       </div>
       <div class="calendar-body">
     `;
@@ -878,45 +868,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Open modal (generalized for any modal)
-  function openModal(modal) {
-    if (!modal) return;
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  }
-  
-  // Close modal handler (generalized for any modal)
-  function closeModalHandler(modal) {
-    if (!modal) return;
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-    
-    // Reset form if it's the appointment modal
-    if (modal === appointmentModal) {
-      resetForm();
-    }
-    
-    // Show change status button again if it was hidden
-    if (modal === appointmentDetailModal && changeStatusBtn) {
-      changeStatusBtn.style.display = 'block';
-    }
-  }
-  
-  // Open schedule modal
-  function openScheduleModal() {
-    populateScheduleForm();
-    openModal(scheduleModal);
-  }
-  
-  // Close schedule modal
-  function closeScheduleModal() {
-    closeModalHandler(scheduleModal);
-  }
-  
   // Populate schedule form with existing data
   function populateScheduleForm() {
+    if (!scheduleDay) return;
+    
     scheduleDay.value = "1"; // Default to Monday
-    isWeekend.checked = false;
+    if (isWeekend) isWeekend.checked = false;
     
     // Clear time slots
     document.getElementById('time-slot-1').value = '';
@@ -936,6 +893,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Update schedule form based on selected day
   function updateScheduleFormForDay() {
+    if (!scheduleDay || !isWeekend) return;
+    
     const selectedDayOfWeek = parseInt(scheduleDay.value);
     const daySchedule = schedules.find(s => s.dayOfWeek === selectedDayOfWeek);
     
@@ -965,6 +924,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Toggle time slots visibility based on weekend checkbox
   function toggleTimeSlots() {
+    if (!isWeekend || !timeSlotsContainer) return;
+    
     if (isWeekend.checked) {
       timeSlotsContainer.style.display = 'none';
     } else {
@@ -974,16 +935,18 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Render schedule days
   function renderScheduleDays() {
+    if (!scheduleDaysContainer) return;
+    
     scheduleDaysContainer.innerHTML = '';
     
     const daysOfWeek = [
-      { value: 0, name: 'Sunday' },
-      { value: 1, name: 'Monday' },
-      { value: 2, name: 'Tuesday' },
-      { value: 3, name: 'Wednesday' },
-      { value: 4, name: 'Thursday' },
-      { value: 5, name: 'Friday' },
-      { value: 6, name: 'Saturday' }
+      { value: 0, name: 'Неділя' },
+      { value: 1, name: 'Понеділок' },
+      { value: 2, name: 'Вівторок' },
+      { value: 3, name: 'Середа' },
+      { value: 4, name: 'Четвер' },
+      { value: 5, name: 'П\'ятниця' },
+      { value: 6, name: 'Субота' }
     ];
     
     daysOfWeek.forEach(day => {
@@ -994,7 +957,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dayElement.innerHTML = `
         <div class="day-name">${day.name}</div>
         <div class="day-status">
-          ${daySchedule ? (daySchedule.isWeekend ? 'Weekend' : 'Working Day') : 'Not Set'}
+          ${daySchedule ? (daySchedule.isWeekend ? 'Вихідний' : 'Робочий день') : 'Не встановлено'}
         </div>
       `;
       
@@ -1059,10 +1022,10 @@ document.addEventListener('DOMContentLoaded', () => {
       renderWeeklyView(selectedDate);
       updateMonthCalendar(selectedDate);
       
-      showMessage('success', 'Schedule updated successfully!');
+      showMessage('success', 'Розклад успішно оновлено!');
     } catch (error) {
-      console.error('Error saving schedule:', error);
-      showMessage('error', 'Failed to save schedule. Please try again later.');
+      console.error('Помилка збереження розкладу:', error);
+      showMessage('error', 'Не вдалося зберегти розклад. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -1113,17 +1076,19 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      closeModalHandler(appointmentModal);
-      showMessage('success', `Appointment ${currentAppointmentId ? 'updated' : 'created'} successfully!`);
+      closeModal(appointmentModal);
+      showMessage('success', `Запис успішно ${currentAppointmentId ? 'оновлено' : 'створено'}!`);
       loadAppointments();
     } catch (error) {
-      console.error('Error saving appointment:', error);
-      showMessage('error', 'Failed to save appointment. Please try again later.');
+      console.error('Помилка збереження запису:', error);
+      showMessage('error', 'Не вдалося зберегти запис. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Reset form
   function resetForm() {
+    if (!appointmentForm) return;
+    
     appointmentForm.reset();
     
     // Clear available times
@@ -1139,51 +1104,10 @@ document.addEventListener('DOMContentLoaded', () => {
     populateAvailableTimes();
   }
   
-  // Helper functions
-  function formatDate(date) {
-    return date.toLocaleDateString('en-US', { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  }
-  
-  function formatTime(date) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-  
-  function formatISODate(date) {
-    return date.toISOString().split('T')[0];
-  }
-  
-  function getDayName(date) {
-    return date.toLocaleDateString('en-US', { weekday: 'long' });
-  }
-  
-  function getMonthName(month) {
-    const date = new Date();
-    date.setMonth(month);
-    return date.toLocaleDateString('en-US', { month: 'long' });
-  }
-  
-  function isSameDay(date1, date2) {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
-  }
-  
-  // Show loader
-  function showLoader() {
-    appointmentsLoader.style.display = 'flex';
-  }
-  
-  // Hide loader
-  function hideLoader() {
-    appointmentsLoader.style.display = 'none';
-  }
-  
   // Apply filters
   function applyFilters() {
+    if (!statusFilter || !dateFilter) return;
+    
     const filters = {
       status: statusFilter.value,
       date: dateFilter.value
@@ -1194,44 +1118,32 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Clear filters
   function clearFilters() {
+    if (!statusFilter || !dateFilter) return;
+    
     statusFilter.value = 'all';
     dateFilter.value = '';
     loadAppointments();
   }
   
-  // Show message
-  function showMessage(type, message) {
-    // Check if message container exists
-    let messageContainer = document.querySelector('.message-container');
-    
-    // Create if doesn't exist
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.className = 'message-container';
-      document.body.appendChild(messageContainer);
+  // Helper function to get status emoji
+  function getStatusEmoji(status) {
+    switch (status) {
+      case 'pending': return '⏳';
+      case 'confirmed': return '✅';
+      case 'completed': return '🎉';
+      case 'cancelled': return '❌';
+      default: return '❓';
     }
-    
-    // Create message element
-    const messageElement = document.createElement('div');
-    messageElement.className = `message message-${type}`;
-    messageElement.textContent = message;
-    
-    // Add close button
-    const closeButton = document.createElement('span');
-    closeButton.className = 'message-close';
-    closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', () => {
-      messageElement.remove();
-    });
-    
-    messageElement.appendChild(closeButton);
-    messageContainer.appendChild(messageElement);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (messageElement.parentNode) {
-        messageElement.remove();
-      }
-    }, 5000);
+  }
+  
+  // Helper function to get status text in Ukrainian
+  function getStatusText(status) {
+    switch (status) {
+      case 'pending': return 'Очікує';
+      case 'confirmed': return 'Підтверджено';
+      case 'completed': return 'Завершено';
+      case 'cancelled': return 'Скасовано';
+      default: return 'Невідомо';
+    }
   }
 });

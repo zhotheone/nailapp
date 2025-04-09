@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nail App - Procedure Management</title>
+  <title>Nail App - Управління процедурами</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap">
@@ -16,10 +16,10 @@
         <h1>Nail App</h1>
       </div>
       <ul class="nav-links">
-        <li><a href="/"><i class="fas fa-calendar-alt"></i><span>Appointments</span></a></li>
-        <li><a href="/clients.html"><i class="fas fa-users"></i><span>Clients</span></a></li>
-        <li><a href="/procedures.html" class="active"><i class="fas fa-spa"></i><span>Procedures</span></a></li>
-        <li><a href="/stats.html"><i class="fas fa-chart-bar"></i><span>Stats</span></a></li>
+        <li><a href="/"><i class="fas fa-calendar-alt"></i><span>Записи</span></a></li>
+        <li><a href="/clients.html"><i class="fas fa-users"></i><span>Клієнти</span></a></li>
+        <li><a href="/procedures.html" class="active"><i class="fas fa-spa"></i><span>Процедури</span></a></li>
+        <li><a href="/stats.html"><i class="fas fa-chart-bar"></i><span>Статистика</span></a></li>
       </ul>
     </div>
   </nav>
@@ -27,19 +27,19 @@
   <main class="container">
     <section class="content-section procedures-section">
       <div class="section-header">
-        <h2>Procedures</h2>
+        <h2>Процедури</h2>
       </div>
 
       <div class="filters procedures-filters">
         <div class="filter-group">
-          <label for="procedure-search">Search:</label>
-          <input type="text" id="procedure-search" placeholder="Procedure name">
+          <label for="procedure-search">Пошук:</label>
+          <input type="text" id="procedure-search" placeholder="Назва процедури">
         </div>
         <div class="filter-group">
-          <label for="price-filter">Max Price:</label>
+          <label for="price-filter">Максимальна ціна:</label>
           <input type="number" id="price-filter" min="0" step="100">
         </div>
-        <button id="clear-procedure-filters" class="btn btn-secondary">Clear Filters</button>
+        <button id="clear-procedure-filters" class="btn btn-secondary">Очистити фільтри</button>
       </div>
 
       <div class="loader" id="procedures-loader">
@@ -59,19 +59,19 @@
         <div class="fab-option-icon">
           <i class="fas fa-spa"></i>
         </div>
-        <span class="fab-option-label">New Procedure</span>
+        <span class="fab-option-label">Нова процедура</span>
       </div>
       <div class="fab-option fab-option-client fab-client">
         <div class="fab-option-icon">
           <i class="fas fa-user-plus"></i>
         </div>
-        <span class="fab-option-label">New Client</span>
+        <span class="fab-option-label">Новий клієнт</span>
       </div>
-      <div class="fab-option fab-option-procedure fab-primary">
+      <div class="fab-option fab-option-primary fab-primary">
         <div class="fab-option-icon">
           <i class="fas fa-calendar-plus"></i>
         </div>
-        <span class="fab-option-label">New Appointment</span>
+        <span class="fab-option-label">Новий запис</span>
       </div>
     </div>
     <div class="fab-main">
@@ -83,29 +83,51 @@
   <div id="procedure-modal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
-      <h2 id="procedure-modal-title">New Procedure</h2>
+      <h2 id="procedure-modal-title">Нова процедура</h2>
       <form id="procedure-form">
         <div class="form-group">
-          <label for="procedure-name">Name:</label>
+          <label for="procedure-name">Назва:</label>
           <input type="text" id="procedure-name" name="name" required>
         </div>
         <div class="form-group">
-          <label for="procedure-price">Price:</label>
+          <label for="procedure-price">Ціна:</label>
           <input type="number" id="procedure-price" name="price" step="0.01" min="0" required>
         </div>
         <div class="form-group">
-          <label for="procedure-time">Time to Complete (minutes):</label>
+          <label for="procedure-time">Час виконання (хвилини):</label>
           <input type="number" id="procedure-time" name="timeToComplete" min="5" step="5" required>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary close-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary close-btn">Скасувати</button>
+          <button type="submit" class="btn btn-primary">Зберегти</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="/js/navbar.js"></script>
+  <!-- Procedure Detail Modal / Card -->
+  <div id="procedure-detail-modal" class="modal">
+    <div class="modal-content procedure-detail-card">
+      <span class="close-modal">&times;</span>
+      <h2>Деталі процедури</h2>
+      <div id="procedure-details" class="procedure-details">
+        <!-- Details will be loaded dynamically -->
+      </div>
+      <div class="procedure-stats">
+        <h3>Статистика використання</h3>
+        <div id="procedure-usage" class="procedure-usage">
+          <!-- Usage statistics will be loaded here -->
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button id="edit-procedure-btn" class="btn btn-secondary"><i class="fas fa-edit"></i> Редагувати</button>
+        <button id="new-appointment-for-procedure-btn" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Створити запис</button>
+        <button id="delete-procedure-btn" class="btn btn-danger"><i class="fas fa-trash"></i> Видалити</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
   <script src="/js/procedures.js"></script>
 </body>
 </html>

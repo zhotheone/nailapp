@@ -4,20 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const clientsLoader = document.getElementById('clients-loader');
   const clientModal = document.getElementById('client-modal');
   const clientForm = document.getElementById('client-form');
+  const clientDetailModal = document.getElementById('client-detail-modal');
+  const clientDetails = document.getElementById('client-details');
+  const clientAppointments = document.getElementById('client-appointments');
   const modalTitle = document.getElementById('client-modal-title');
-  const closeModal = document.querySelector('.close-modal');
-  const closeBtn = document.querySelector('.close-btn');
   const clientSearch = document.getElementById('client-search');
   const ratingFilter = document.getElementById('rating-filter');
   const clearFiltersBtn = document.getElementById('clear-client-filters');
   
+  // Action buttons for client detail
+  const editClientBtn = document.getElementById('edit-client-btn');
+  const newAppointmentForClientBtn = document.getElementById('new-appointment-for-client-btn');
+  const deleteClientBtn = document.getElementById('delete-client-btn');
+  
   // Global variables
   let currentClients = [];
   let currentClientId = null;
+  let selectedClient = null;
   
   // API endpoint
   const API = {
-    clients: '/api/clients'
+    clients: '/api/clients',
+    appointments: '/api/appointments'
   };
   
   // Initialize the page
@@ -29,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadClients();
       setupEventListeners();
     } catch (error) {
-      console.error('Initialization error:', error);
-      showMessage('error', 'Failed to initialize the application. Please try again later.');
+      console.error('Помилка ініціалізації:', error);
+      showMessage('error', 'Не вдалося ініціалізувати додаток. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Load clients from API
   async function loadClients(filters = {}) {
-    showLoader();
+    showLoader(clientsLoader, clientsList);
     try {
       let url = API.clients;
       
@@ -71,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderClients(currentClients);
       }
     } catch (error) {
-      console.error('Error loading clients:', error);
-      showMessage('error', 'Failed to load clients. Please try again later.');
+      console.error('Помилка завантаження клієнтів:', error);
+      showMessage('error', 'Не вдалося завантажити клієнтів. Будь ласка, спробуйте пізніше.');
     } finally {
-      hideLoader();
+      hideLoader(clientsLoader, clientsList);
     }
   }
   
@@ -104,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render clients to the DOM
   function renderClients(clients) {
     if (clients.length === 0) {
-      clientsList.innerHTML = '<div class="no-data">No clients found. Create a new client to get started.</div>';
+      clientsList.innerHTML = '<div class="no-data">Клієнтів не знайдено. Створіть нового клієнта, щоб почати.</div>';
       return;
     }
     
@@ -136,12 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         <div class="data-actions">
-          <button class="btn btn-secondary btn-sm edit-btn" data-id="${client._id}">Edit</button>
-          <button class="btn btn-danger btn-sm delete-btn" data-id="${client._id}">Delete</button>
+          <button class="btn btn-secondary btn-sm view-btn" data-id="${client._id}"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-secondary btn-sm edit-btn" data-id="${client._id}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm delete-btn" data-id="${client._id}"><i class="fas fa-trash"></i></button>
         </div>
       `;
       
       // Add event listeners
+      card.querySelector('.view-btn').addEventListener('click', () => {
+        viewClientDetails(client._id);
+      });
+      
       card.querySelector('.edit-btn').addEventListener('click', () => {
         editClient(client._id);
       });
@@ -156,17 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set up event listeners
   function setupEventListeners() {
-    // Close modal buttons
-    closeModal.addEventListener('click', closeModalHandler);
-    closeBtn.addEventListener('click', closeModalHandler);
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-      if (e.target === clientModal) {
-        closeModalHandler();
-      }
-    });
-    
     // Form submission
     clientForm.addEventListener('submit', handleFormSubmit);
     
@@ -178,7 +180,33 @@ document.addEventListener('DOMContentLoaded', () => {
     ratingFilter.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
     
-    // Modal open from FAB is handled in navbar.js
+    // Client detail action buttons
+    if (editClientBtn) {
+      editClientBtn.addEventListener('click', () => {
+        if (selectedClient) {
+          editClient(selectedClient._id);
+          closeModal(clientDetailModal);
+        }
+      });
+    }
+    
+    if (newAppointmentForClientBtn) {
+      newAppointmentForClientBtn.addEventListener('click', () => {
+        if (selectedClient) {
+          // Redirect to appointments page with client pre-selected
+          window.location.href = `/?new=true&client=${selectedClient._id}`;
+        }
+      });
+    }
+    
+    if (deleteClientBtn) {
+      deleteClientBtn.addEventListener('click', () => {
+        if (selectedClient) {
+          deleteClient(selectedClient._id);
+          closeModal(clientDetailModal);
+        }
+      });
+    }
   }
   
   // Apply filters
@@ -198,6 +226,93 @@ document.addEventListener('DOMContentLoaded', () => {
     loadClients();
   }
   
+  // View client details
+  async function viewClientDetails(id) {
+    try {
+      const [clientResponse, appointmentsResponse] = await Promise.all([
+        fetch(`${API.clients}/${id}`),
+        fetch(`${API.appointments}?clientId=${id}`)
+      ]);
+      
+      if (!clientResponse.ok || !appointmentsResponse.ok) {
+        throw new Error(`HTTP error! Status: ${clientResponse.status || appointmentsResponse.status}`);
+      }
+      
+      const client = await clientResponse.json();
+      const appointments = await appointmentsResponse.json();
+      
+      selectedClient = client;
+      
+      // Generate star rating HTML
+      let starsHtml = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= client.trustRating) {
+          starsHtml += '<i class="fas fa-star"></i> ';
+        } else {
+          starsHtml += '<i class="far fa-star"></i> ';
+        }
+      }
+      
+      // Populate client details
+      clientDetails.innerHTML = `
+        <div class="detail-row">
+          <div class="detail-label">Ім'я:</div>
+          <div class="detail-value">${client.name} ${client.surName}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Телефон:</div>
+          <div class="detail-value"><i class="fas fa-phone"></i> ${client.phoneNum}</div>
+        </div>
+        ${client.instagram ? `
+        <div class="detail-row">
+          <div class="detail-label">Instagram:</div>
+          <div class="detail-value"><i class="fab fa-instagram"></i> ${client.instagram}</div>
+        </div>
+        ` : ''}
+        <div class="detail-row">
+          <div class="detail-label">Рейтинг довіри:</div>
+          <div class="detail-value">${starsHtml}</div>
+        </div>
+      `;
+      
+      // Populate appointment history
+      if (appointments.length === 0) {
+        clientAppointments.innerHTML = '<div class="no-data">Історії відвідувань ще немає.</div>';
+      } else {
+        clientAppointments.innerHTML = '';
+        
+        // Sort appointments by date (newest first)
+        appointments.sort((a, b) => new Date(b.time) - new Date(a.time));
+        
+        appointments.forEach(appointment => {
+          const procedure = appointment.procedureId && typeof appointment.procedureId === 'object'
+            ? appointment.procedureId.name
+            : 'Процедура';
+          
+          const appDate = new Date(appointment.time);
+          
+          const appointmentItem = document.createElement('div');
+          appointmentItem.className = 'appointment-item';
+          appointmentItem.innerHTML = `
+            <div class="appointment-date">${formatDate(appDate)} - ${formatTime(appDate)}</div>
+            <div class="appointment-procedure">${procedure}</div>
+            <div class="appointment-price">💰 ${appointment.finalPrice || appointment.price} грн</div>
+            <div class="appointment-status status-${appointment.status}">
+              ${getStatusEmoji(appointment.status)} ${getStatusText(appointment.status)}
+            </div>
+          `;
+          
+          clientAppointments.appendChild(appointmentItem);
+        });
+      }
+      
+      openModal(clientDetailModal);
+    } catch (error) {
+      console.error('Помилка перегляду деталей клієнта:', error);
+      showMessage('error', 'Не вдалося завантажити деталі клієнта. Будь ласка, спробуйте пізніше.');
+    }
+  }
+  
   // Edit client
   async function editClient(id) {
     try {
@@ -209,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const client = await response.json();
       
-      modalTitle.textContent = 'Edit Client';
+      modalTitle.textContent = 'Редагувати клієнта';
       currentClientId = id;
       
       // Fill form with client data
@@ -219,16 +334,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('client-instagram').value = client.instagram || '';
       document.getElementById('client-trust-rating').value = client.trustRating;
       
-      openModal();
+      openModal(clientModal);
     } catch (error) {
-      console.error('Error editing client:', error);
-      showMessage('error', 'Failed to edit client. Please try again later.');
+      console.error('Помилка редагування клієнта:', error);
+      showMessage('error', 'Не вдалося редагувати клієнта. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Delete client
   async function deleteClient(id) {
-    if (!confirm('Are you sure you want to delete this client? This will also delete all associated appointments.')) {
+    if (!confirm('Ви впевнені, що хочете видалити цього клієнта? Це також видалить усі пов\'язані записи.')) {
       return;
     }
     
@@ -241,11 +356,11 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      showMessage('success', 'Client deleted successfully!');
+      showMessage('success', 'Клієнта успішно видалено!');
       loadClients();
     } catch (error) {
-      console.error('Error deleting client:', error);
-      showMessage('error', 'Failed to delete client. Please try again later.');
+      console.error('Помилка видалення клієнта:', error);
+      showMessage('error', 'Не вдалося видалити клієнта. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -284,81 +399,34 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      closeModalHandler();
-      showMessage('success', `Client ${currentClientId ? 'updated' : 'created'} successfully!`);
+      closeModal(clientModal);
+      showMessage('success', `Клієнта успішно ${currentClientId ? 'оновлено' : 'створено'}!`);
       loadClients();
     } catch (error) {
-      console.error('Error saving client:', error);
-      showMessage('error', 'Failed to save client. Please try again later.');
+      console.error('Помилка збереження клієнта:', error);
+      showMessage('error', 'Не вдалося зберегти клієнта. Будь ласка, спробуйте пізніше.');
     }
   }
   
-  // Helper functions
-  function showLoader() {
-    clientsLoader.style.display = 'flex';
-    clientsList.style.display = 'none';
-  }
-  
-  function hideLoader() {
-    clientsLoader.style.display = 'none';
-    clientsList.style.display = 'block';
-  }
-  
-  function openModal() {
-    clientModal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  }
-  
-  function closeModalHandler() {
-    clientModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-    clientForm.reset();
-    currentClientId = null;
-  }
-  
-  function showMessage(type, message) {
-    // Check if message container exists
-    let messageContainer = document.querySelector('.message-container');
-    
-    // Create if doesn't exist
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.className = 'message-container';
-      document.body.appendChild(messageContainer);
+  // Helper function to get status emoji
+  function getStatusEmoji(status) {
+    switch (status) {
+      case 'pending': return '⏳';
+      case 'confirmed': return '✅';
+      case 'completed': return '🎉';
+      case 'cancelled': return '❌';
+      default: return '❓';
     }
-    
-    // Create message element
-    const messageElement = document.createElement('div');
-    messageElement.className = `message message-${type}`;
-    messageElement.textContent = message;
-    
-    // Add close button
-    const closeButton = document.createElement('span');
-    closeButton.className = 'message-close';
-    closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', () => {
-      messageElement.remove();
-    });
-    
-    messageElement.appendChild(closeButton);
-    messageContainer.appendChild(messageElement);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (messageElement.parentNode) {
-        messageElement.remove();
-      }
-    }, 5000);
   }
   
-  // Debounce function for search input
-  function debounce(func, delay) {
-    let timeout;
-    return function() {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), delay);
-    };
+  // Helper function to get status text in Ukrainian
+  function getStatusText(status) {
+    switch (status) {
+      case 'pending': return 'Очікує';
+      case 'confirmed': return 'Підтверджено';
+      case 'completed': return 'Завершено';
+      case 'cancelled': return 'Скасовано';
+      default: return 'Невідомо';
+    }
   }
 });

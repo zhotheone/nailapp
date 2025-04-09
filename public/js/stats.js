@@ -62,10 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderFrequentClients(stats.frequentClients);
       
       // Show the stats content
-      hideLoader();
+      hideLoader(statsLoader, statsContent);
+      statsContent.style.display = 'block';
     } catch (error) {
-      console.error('Error initializing stats page:', error);
-      showMessage('error', 'Failed to load statistics. Please try again later.');
+      console.error('Помилка ініціалізації сторінки статистики:', error);
+      showMessage('error', 'Не вдалося завантажити статистику. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -107,13 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
     totalClientsEl.textContent = stats.totalClients;
     totalProceduresEl.textContent = stats.totalProcedures;
     totalAppointmentsEl.textContent = stats.appointments.total;
-    totalRevenueEl.textContent = `$${stats.revenue.total.toFixed(2)}`;
+    totalRevenueEl.textContent = `₴${stats.revenue.total.toFixed(2)}`;
   }
   
   // Create the appointment status chart
   function createStatusChart(appointmentStats) {
     const data = {
-      labels: ['Pending', 'Confirmed', 'Completed', 'Cancelled'],
+      labels: ['Очікує', 'Підтверджено', 'Завершено', 'Скасовано'],
       datasets: [{
         data: [
           appointmentStats.pending,
@@ -183,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     monthlyData.forEach(item => {
       const monthNames = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер',
+        'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'
       ];
       
       labels.push(`${monthNames[item._id.month - 1]} ${item._id.year}`);
@@ -194,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = {
       labels: labels,
       datasets: [{
-        label: 'Revenue',
+        label: 'Дохід',
         data: revenues,
         backgroundColor: chartColors.rose,
         borderColor: chartColors.rose,
@@ -219,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 family: 'Fira Code'
               },
               callback: function(value) {
-                return '$' + value;
+                return '₴' + value;
               }
             },
             grid: {
@@ -255,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             callbacks: {
               label: function(context) {
-                return '$' + context.parsed.y;
+                return '₴' + context.parsed.y;
               }
             }
           }
@@ -283,9 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const clientCounts = counts.map(count => countMap[count]);
     
     const data = {
-      labels: counts.map(count => `${count} visits`),
+      labels: counts.map(count => `${count} візитів`),
       datasets: [{
-        label: 'Number of Clients',
+        label: 'Кількість клієнтів',
         data: clientCounts,
         backgroundColor: chartColors.iris,
         borderColor: chartColors.iris,
@@ -331,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           title: {
             display: true,
-            text: 'Client Visit Frequency',
+            text: 'Частота відвідувань клієнтів',
             color: chartColors.text,
             font: {
               family: 'Fira Code',
@@ -359,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render popular procedures
   function renderPopularProcedures(procedures) {
     if (!procedures || procedures.length === 0) {
-      popularProceduresList.innerHTML = '<div class="no-data">No procedure data available yet.</div>';
+      popularProceduresList.innerHTML = '<div class="no-data">Дані про процедури ще недоступні.</div>';
       return;
     }
     
@@ -367,15 +368,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     procedures.forEach((procedure, index) => {
       const card = document.createElement('div');
-      card.className = 'data-card popular-procedure-card';
+      card.className = 'popular-procedure-card';
       
       card.innerHTML = `
         <div class="popular-procedure-info">
           <span class="popular-procedure-rank">#${index + 1}</span>
           <h3>${procedure.name}</h3>
-          <div class="procedure-price">Price: $${procedure.price.toFixed(2)}</div>
+          <div class="procedure-price">Ціна: ₴${procedure.price.toFixed(2)}</div>
         </div>
-        <div class="procedure-count">${procedure.count} appointments</div>
+        <div class="procedure-count">${procedure.count} записів</div>
       `;
       
       popularProceduresList.appendChild(card);
@@ -385,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render frequent clients
   function renderFrequentClients(clients) {
     if (!clients || clients.length === 0) {
-      frequentClientsList.innerHTML = '<div class="no-data">No client data available yet.</div>';
+      frequentClientsList.innerHTML = '<div class="no-data">Дані про клієнтів ще недоступні.</div>';
       return;
     }
     
@@ -393,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     clients.forEach((client, index) => {
       const card = document.createElement('div');
-      card.className = 'data-card frequent-client-card';
+      card.className = 'frequent-client-card';
       
       // Generate star rating HTML for trustRating
       let starsHtml = '';
@@ -411,58 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3>${client.name} ${client.surName}</h3>
           <div class="client-trust-rating">${starsHtml}</div>
         </div>
-        <div class="client-visit-count">${client.count} visits</div>
+        <div class="client-visit-count">${client.count} візитів</div>
       `;
       
       frequentClientsList.appendChild(card);
     });
-  }
-  
-  // Show loader
-  function showLoader() {
-    statsLoader.style.display = 'flex';
-    statsContent.style.display = 'none';
-  }
-  
-  // Hide loader
-  function hideLoader() {
-    statsLoader.style.display = 'none';
-    statsContent.style.display = 'block';
-  }
-  
-  // Show message
-  function showMessage(type, message) {
-    // Check if message container exists
-    let messageContainer = document.querySelector('.message-container');
-    
-    // Create if doesn't exist
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.className = 'message-container';
-      document.body.appendChild(messageContainer);
-    }
-    
-    // Create message element
-    const messageElement = document.createElement('div');
-    messageElement.className = `message message-${type}`;
-    messageElement.textContent = message;
-    
-    // Add close button
-    const closeButton = document.createElement('span');
-    closeButton.className = 'message-close';
-    closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', () => {
-      messageElement.remove();
-    });
-    
-    messageElement.appendChild(closeButton);
-    messageContainer.appendChild(messageElement);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (messageElement.parentNode) {
-        messageElement.remove();
-      }
-    }, 5000);
   }
 });

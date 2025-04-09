@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nail App - Appointment Management</title>
+  <title>@savika_nail - Управління записами</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&display=swap">
@@ -13,7 +13,7 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="logo">
-        <h1>Nail App</h1>
+        <h1>@savika_nail</h1>
       </div>
       <ul class="nav-links">
         <li><a href="/" class="active"><i class="fas fa-calendar-alt"></i><span>Записи</span></a></li>
@@ -27,7 +27,7 @@
   <main class="container">
     <section class="content-section appointments-section">
       <div class="section-header">
-        <h2>Appointments</h2>
+        <h2>Записи</h2>
         <div class="view-buttons">
           <button id="weekly-view-btn" class="btn btn-view active">Тиждень</button>
           <button id="monthly-view-btn" class="btn btn-view">Місяць</button>
@@ -66,24 +66,24 @@
         <div class="spinner"></div>
       </div>
 
-      <!-- Filters moved above the view container -->
-      <!-- <div class="filters appointments-filters"> -->
-        <!-- <div class="filter-group"> -->
-          <!-- <label for="status-filter">Status:</label> -->
-          <!-- <select id="status-filter"> -->
-            <!-- <option value="all">All</option> -->
-            <!-- <option value="pending">Pending</option> -->
-            <!-- <option value="confirmed">Confirmed</option> -->
-            <!-- <option value="completed">Completed</option> --> 
-            <!-- <option value="cancelled">Cancelled</option> -->
-          <!-- </select> -->
-        <!-- </div> -->
-        <!-- <div class="filter-group"> -->
-          <!-- <label for="date-filter">Date:</label> -->
-          <!-- <input type="date" id="date-filter"> -->
-        <!-- </div> --> 
-        <!-- <button id="clear-filters" class="btn btn-secondary">Clear Filters</button> -->
-      <!-- </div> -->
+      <!-- Filters -->
+      <!-- <div class="filters appointments-filters">
+        <div class="filter-group">
+          <label for="status-filter">Статус:</label>
+          <select id="status-filter">
+            <option value="all">Всі</option>
+            <option value="pending">Очікує</option>
+            <option value="confirmed">Підтверджено</option>
+            <option value="completed">Завершено</option> 
+            <option value="cancelled">Скасовано</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="date-filter">Дата:</label>
+          <input type="date" id="date-filter">
+        </div>
+        <button id="clear-filters" class="btn btn-secondary">Очистити фільтри</button>
+      </div> -->
     </section>
   </main>
 
@@ -118,7 +118,7 @@
   <div id="schedule-modal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
-      <h2>Manage Schedule</h2>
+      <h2>Налаштування розкладу</h2>
       <div id="schedule-days-container" class="schedule-days-container">
         <!-- Schedule days will be loaded here dynamically -->
       </div>
@@ -209,7 +209,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="final-price">Остання ціна:</label>
+          <label for="final-price">Остаточна ціна:</label>
           <input type="number" id="final-price" name="finalPrice" step="0.01">
         </div>
         <div class="form-group">
@@ -224,23 +224,23 @@
     </div>
   </div>
 
-  <!-- Appointment Detail Modal -->
+  <!-- Appointment Detail Modal / Card -->
   <div id="appointment-detail-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content appointment-detail-card">
       <span class="close-modal">&times;</span>
-      <h2>Деталі:</h2>
+      <h2>Деталі запису</h2>
       <div id="appointment-details" class="appointment-details">
         <!-- Details will be loaded dynamically -->
       </div>
       <div class="action-buttons">
-        <button id="edit-appointment-btn" class="btn btn-secondary">Редагувати</button>
-        <button id="change-status-btn" class="btn btn-primary">Змітини статус</button>
-        <button id="cancel-appointment-btn" class="btn btn-danger">Скасувати запис</button>
+        <button id="edit-appointment-btn" class="btn btn-secondary"><i class="fas fa-edit"></i> Редагувати</button>
+        <button id="change-status-btn" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Змінити статус</button>
+        <button id="cancel-appointment-btn" class="btn btn-danger"><i class="fas fa-times"></i> Скасувати запис</button>
       </div>
     </div>
   </div>
 
-  <script src="/js/navbar.js"></script>
+  <script src="/js/utils.js"></script>
   <script src="/js/appointments.js"></script>
 </body>
 </html>

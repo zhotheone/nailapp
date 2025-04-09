@@ -4,20 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const proceduresLoader = document.getElementById('procedures-loader');
   const procedureModal = document.getElementById('procedure-modal');
   const procedureForm = document.getElementById('procedure-form');
+  const procedureDetailModal = document.getElementById('procedure-detail-modal');
+  const procedureDetails = document.getElementById('procedure-details');
+  const procedureUsage = document.getElementById('procedure-usage');
   const modalTitle = document.getElementById('procedure-modal-title');
-  const closeModal = document.querySelector('.close-modal');
-  const closeBtn = document.querySelector('.close-btn');
   const procedureSearch = document.getElementById('procedure-search');
   const priceFilter = document.getElementById('price-filter');
   const clearFiltersBtn = document.getElementById('clear-procedure-filters');
   
+  // Action buttons for procedure detail
+  const editProcedureBtn = document.getElementById('edit-procedure-btn');
+  const newAppointmentForProcedureBtn = document.getElementById('new-appointment-for-procedure-btn');
+  const deleteProcedureBtn = document.getElementById('delete-procedure-btn');
+  
   // Global variables
   let currentProcedures = [];
   let currentProcedureId = null;
+  let selectedProcedure = null;
   
   // API endpoint
   const API = {
-    procedures: '/api/procedures'
+    procedures: '/api/procedures',
+    appointments: '/api/appointments'
   };
   
   // Initialize the page
@@ -29,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadProcedures();
       setupEventListeners();
     } catch (error) {
-      console.error('Initialization error:', error);
-      showMessage('error', 'Failed to initialize the application. Please try again later.');
+      console.error('Помилка ініціалізації:', error);
+      showMessage('error', 'Не вдалося ініціалізувати додаток. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Load procedures from API
   async function loadProcedures(filters = {}) {
-    showLoader();
+    showLoader(proceduresLoader, proceduresList);
     try {
       let url = API.procedures;
       
@@ -71,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProcedures(currentProcedures);
       }
     } catch (error) {
-      console.error('Error loading procedures:', error);
-      showMessage('error', 'Failed to load procedures. Please try again later.');
+      console.error('Помилка завантаження процедур:', error);
+      showMessage('error', 'Не вдалося завантажити процедури. Будь ласка, спробуйте пізніше.');
     } finally {
-      hideLoader();
+      hideLoader(proceduresLoader, proceduresList);
     }
   }
   
@@ -102,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render procedures to the DOM
   function renderProcedures(procedures) {
     if (procedures.length === 0) {
-      proceduresList.innerHTML = '<div class="no-data">No procedures found. Create a new procedure to get started.</div>';
+      proceduresList.innerHTML = '<div class="no-data">Процедур не знайдено. Створіть нову процедуру, щоб почати.</div>';
       return;
     }
     
@@ -113,17 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'data-card procedure-card';
       
       // Format time as hours and minutes
-      const hours = Math.floor(procedure.timeToComplete / 60);
-      const minutes = procedure.timeToComplete % 60;
-      let timeString = '';
-      
-      if (hours > 0) {
-        timeString += `${hours} hour${hours > 1 ? 's' : ''}`;
-      }
-      
-      if (minutes > 0) {
-        timeString += `${hours > 0 ? ' ' : ''}${minutes} minute${minutes > 1 ? 's' : ''}`;
-      }
+      const timeString = formatProcedureTime(procedure.timeToComplete);
       
       card.innerHTML = `
         <div class="data-info">
@@ -131,17 +129,22 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3>${procedure.name}</h3>
           </div>
           <div class="procedure-details">
-            <div class="procedure-price"><i class="fas fa-tag"></i> $${procedure.price.toFixed(2)}</div>
+            <div class="procedure-price"><i class="fas fa-hryvnia"></i> ${procedure.price.toFixed(2)} грн</div>
             <div class="procedure-time"><i class="far fa-clock"></i> ${timeString}</div>
           </div>
         </div>
         <div class="data-actions">
-          <button class="btn btn-secondary btn-sm edit-btn" data-id="${procedure._id}">Edit</button>
-          <button class="btn btn-danger btn-sm delete-btn" data-id="${procedure._id}">Delete</button>
+          <button class="btn btn-secondary btn-sm view-btn" data-id="${procedure._id}"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-secondary btn-sm edit-btn" data-id="${procedure._id}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm delete-btn" data-id="${procedure._id}"><i class="fas fa-trash"></i></button>
         </div>
       `;
       
       // Add event listeners
+      card.querySelector('.view-btn').addEventListener('click', () => {
+        viewProcedureDetails(procedure._id);
+      });
+      
       card.querySelector('.edit-btn').addEventListener('click', () => {
         editProcedure(procedure._id);
       });
@@ -154,19 +157,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // Format procedure time
+  function formatProcedureTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    let timeString = '';
+    
+    if (hours > 0) {
+      timeString += `${hours} год.${hours > 1 ? '' : ''}`;
+    }
+    
+    if (mins > 0) {
+      timeString += `${hours > 0 ? ' ' : ''}${mins} хв.${mins > 1 ? '' : ''}`;
+    }
+    
+    return timeString;
+  }
+  
   // Set up event listeners
   function setupEventListeners() {
-    // Close modal buttons
-    closeModal.addEventListener('click', closeModalHandler);
-    closeBtn.addEventListener('click', closeModalHandler);
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-      if (e.target === procedureModal) {
-        closeModalHandler();
-      }
-    });
-    
     // Form submission
     procedureForm.addEventListener('submit', handleFormSubmit);
     
@@ -178,7 +187,33 @@ document.addEventListener('DOMContentLoaded', () => {
     priceFilter.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
     
-    // Modal open from FAB is handled in navbar.js
+    // Procedure detail action buttons
+    if (editProcedureBtn) {
+      editProcedureBtn.addEventListener('click', () => {
+        if (selectedProcedure) {
+          editProcedure(selectedProcedure._id);
+          closeModal(procedureDetailModal);
+        }
+      });
+    }
+    
+    if (newAppointmentForProcedureBtn) {
+      newAppointmentForProcedureBtn.addEventListener('click', () => {
+        if (selectedProcedure) {
+          // Redirect to appointments page with procedure pre-selected
+          window.location.href = `/?new=true&procedure=${selectedProcedure._id}`;
+        }
+      });
+    }
+    
+    if (deleteProcedureBtn) {
+      deleteProcedureBtn.addEventListener('click', () => {
+        if (selectedProcedure) {
+          deleteProcedure(selectedProcedure._id);
+          closeModal(procedureDetailModal);
+        }
+      });
+    }
   }
   
   // Apply filters
@@ -198,6 +233,84 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProcedures();
   }
   
+  // View procedure details
+  async function viewProcedureDetails(id) {
+    try {
+      const [procedureResponse, appointmentsResponse] = await Promise.all([
+        fetch(`${API.procedures}/${id}`),
+        fetch(`${API.appointments}?procedureId=${id}`)
+      ]);
+      
+      if (!procedureResponse.ok || !appointmentsResponse.ok) {
+        throw new Error(`HTTP error! Status: ${procedureResponse.status || appointmentsResponse.status}`);
+      }
+      
+      const procedure = await procedureResponse.json();
+      const appointments = await appointmentsResponse.json();
+      
+      selectedProcedure = procedure;
+      
+      // Format time as hours and minutes
+      const timeString = formatProcedureTime(procedure.timeToComplete);
+      
+      // Populate procedure details
+      procedureDetails.innerHTML = `
+        <div class="detail-row">
+          <div class="detail-label">Назва:</div>
+          <div class="detail-value">${procedure.name}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Ціна:</div>
+          <div class="detail-value">💰 ${procedure.price.toFixed(2)} грн</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Час виконання:</div>
+          <div class="detail-value">⏱️ ${timeString}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Кількість записів:</div>
+          <div class="detail-value">📅 ${appointments.length}</div>
+        </div>
+      `;
+      
+      // Populate appointment history
+      if (appointments.length === 0) {
+        procedureUsage.innerHTML = '<div class="no-data">Історії використання ще немає.</div>';
+      } else {
+        procedureUsage.innerHTML = '';
+        
+        // Sort appointments by date (newest first)
+        appointments.sort((a, b) => new Date(b.time) - new Date(a.time));
+        
+        appointments.forEach(appointment => {
+          const client = appointment.clientId && typeof appointment.clientId === 'object'
+            ? `${appointment.clientId.name} ${appointment.clientId.surName}`
+            : 'Клієнт';
+          
+          const appDate = new Date(appointment.time);
+          
+          const usageItem = document.createElement('div');
+          usageItem.className = 'usage-item';
+          usageItem.innerHTML = `
+            <div class="usage-date">${formatDate(appDate)} - ${formatTime(appDate)}</div>
+            <div class="usage-client">${client}</div>
+            <div class="usage-price">💰 ${appointment.finalPrice || appointment.price} грн</div>
+            <div class="appointment-status status-${appointment.status}">
+              ${getStatusEmoji(appointment.status)} ${getStatusText(appointment.status)}
+            </div>
+          `;
+          
+          procedureUsage.appendChild(usageItem);
+        });
+      }
+      
+      openModal(procedureDetailModal);
+    } catch (error) {
+      console.error('Помилка перегляду деталей процедури:', error);
+      showMessage('error', 'Не вдалося завантажити деталі процедури. Будь ласка, спробуйте пізніше.');
+    }
+  }
+  
   // Edit procedure
   async function editProcedure(id) {
     try {
@@ -209,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const procedure = await response.json();
       
-      modalTitle.textContent = 'Edit Procedure';
+      modalTitle.textContent = 'Редагувати процедуру';
       currentProcedureId = id;
       
       // Fill form with procedure data
@@ -217,16 +330,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('procedure-price').value = procedure.price;
       document.getElementById('procedure-time').value = procedure.timeToComplete;
       
-      openModal();
+      openModal(procedureModal);
     } catch (error) {
-      console.error('Error editing procedure:', error);
-      showMessage('error', 'Failed to edit procedure. Please try again later.');
+      console.error('Помилка редагування процедури:', error);
+      showMessage('error', 'Не вдалося редагувати процедуру. Будь ласка, спробуйте пізніше.');
     }
   }
   
   // Delete procedure
   async function deleteProcedure(id) {
-    if (!confirm('Are you sure you want to delete this procedure? This will also affect any appointments using this procedure.')) {
+    if (!confirm('Ви впевнені, що хочете видалити цю процедуру? Це також вплине на записи, які використовують цю процедуру.')) {
       return;
     }
     
@@ -239,11 +352,11 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      showMessage('success', 'Procedure deleted successfully!');
+      showMessage('success', 'Процедуру успішно видалено!');
       loadProcedures();
     } catch (error) {
-      console.error('Error deleting procedure:', error);
-      showMessage('error', 'Failed to delete procedure. Please try again later.');
+      console.error('Помилка видалення процедури:', error);
+      showMessage('error', 'Не вдалося видалити процедуру. Будь ласка, спробуйте пізніше.');
     }
   }
   
@@ -280,81 +393,34 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      closeModalHandler();
-      showMessage('success', `Procedure ${currentProcedureId ? 'updated' : 'created'} successfully!`);
+      closeModal(procedureModal);
+      showMessage('success', `Процедуру успішно ${currentProcedureId ? 'оновлено' : 'створено'}!`);
       loadProcedures();
     } catch (error) {
-      console.error('Error saving procedure:', error);
-      showMessage('error', 'Failed to save procedure. Please try again later.');
+      console.error('Помилка збереження процедури:', error);
+      showMessage('error', 'Не вдалося зберегти процедуру. Будь ласка, спробуйте пізніше.');
     }
   }
   
-  // Helper functions
-  function showLoader() {
-    proceduresLoader.style.display = 'flex';
-    proceduresList.style.display = 'none';
-  }
-  
-  function hideLoader() {
-    proceduresLoader.style.display = 'none';
-    proceduresList.style.display = 'block';
-  }
-  
-  function openModal() {
-    procedureModal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  }
-  
-  function closeModalHandler() {
-    procedureModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-    procedureForm.reset();
-    currentProcedureId = null;
-  }
-  
-  function showMessage(type, message) {
-    // Check if message container exists
-    let messageContainer = document.querySelector('.message-container');
-    
-    // Create if doesn't exist
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.className = 'message-container';
-      document.body.appendChild(messageContainer);
+  // Helper function to get status emoji
+  function getStatusEmoji(status) {
+    switch (status) {
+      case 'pending': return '⏳';
+      case 'confirmed': return '✅';
+      case 'completed': return '🎉';
+      case 'cancelled': return '❌';
+      default: return '❓';
     }
-    
-    // Create message element
-    const messageElement = document.createElement('div');
-    messageElement.className = `message message-${type}`;
-    messageElement.textContent = message;
-    
-    // Add close button
-    const closeButton = document.createElement('span');
-    closeButton.className = 'message-close';
-    closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', () => {
-      messageElement.remove();
-    });
-    
-    messageElement.appendChild(closeButton);
-    messageContainer.appendChild(messageElement);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      if (messageElement.parentNode) {
-        messageElement.remove();
-      }
-    }, 5000);
   }
   
-  // Debounce function for search input
-  function debounce(func, delay) {
-    let timeout;
-    return function() {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), delay);
-    };
+  // Helper function to get status text in Ukrainian
+  function getStatusText(status) {
+    switch (status) {
+      case 'pending': return 'Очікує';
+      case 'confirmed': return 'Підтверджено';
+      case 'completed': return 'Завершено';
+      case 'cancelled': return 'Скасовано';
+      default: return 'Невідомо';
+    }
   }
 });

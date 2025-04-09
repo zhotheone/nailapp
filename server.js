@@ -17,14 +17,12 @@ const cache = new NodeCache({ stdTTL: 300 }); // 5 minute cache default
 
 // Configure logger
 const logger = winston.createLogger({
-  level: 'info',
+  level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.json()
   ),
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
@@ -33,6 +31,12 @@ const logger = winston.createLogger({
     }),
   ],
 });
+
+// Only add file transports in development environment
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.File({ filename: 'error.log', level: 'error' }));
+  logger.add(new winston.transports.File({ filename: 'combined.log' }));
+}
 
 // Middleware
 app.use(helmet({

@@ -3,18 +3,7 @@ const router = express.Router();
 const Appointment = require('../models/Appointment');
 const Client = require('../models/Client');
 const Procedure = require('../models/Procedure');
-const winston = require('winston');
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/appointments.log' })
-  ]
-});
+const logger = require('../utils/logger'); // Use shared logger
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 300 });
 

@@ -1,0 +1,50 @@
+{"level":"info","message":"Cache miss for __express__/api/clients/","timestamp":"2025-04-09T15:51:23.786Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T15:51:23.787Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients/","timestamp":"2025-04-09T15:51:53.427Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T15:51:53.428Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients/","timestamp":"2025-04-09T15:51:54.350Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T15:55:05.132Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T15:55:05.132Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T15:55:07.237Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T15:55:07.871Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T15:55:08.376Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T15:55:09.211Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T15:55:38.275Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:03:59.975Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:03:59.976Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:04:04.321Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:04:05.911Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:04:07.133Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:06:35.966Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:06:35.966Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:06:37.380Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:06:46.148Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:06:48.260Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:07:01.967Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:07:54.741Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:07:54.742Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:11:50.479Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:11:50.480Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:12:01.126Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:12:13.360Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:12:22.644Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:13:17.406Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:13:21.986Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:13:32.665Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:15:53.572Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:15:53.572Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:16:12.266Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:16:47.207Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:16:51.471Z"}
+{"data":{"instagram":"@lala","name":"test","phoneNum":"+1","surName":"test","trustRating":5},"level":"info","message":"Creating new client","timestamp":"2025-04-09T16:17:09.588Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:17:09.674Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:17:09.674Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients?search=tes","timestamp":"2025-04-09T16:17:13.832Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:17:13.833Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:17:26.697Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:17:28.630Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients?search=tes","timestamp":"2025-04-09T16:17:30.776Z"}
+{"level":"info","message":"Deleting client with id: 67f69d8506de021b43ab51ae","timestamp":"2025-04-09T16:17:32.682Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-09T16:17:32.761Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-09T16:17:32.761Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-09T16:17:34.371Z"}

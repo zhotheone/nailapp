@@ -1,0 +1,15 @@
+{"level":"info","message":"Cache miss for __express__/api/stats","timestamp":"2025-04-09T16:12:16.693Z"}
+{"level":"info","message":"Fetching overall statistics","timestamp":"2025-04-09T16:12:16.694Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats/monthly-revenue","timestamp":"2025-04-09T16:12:16.696Z"}
+{"level":"info","message":"Fetching monthly revenue statistics","timestamp":"2025-04-09T16:12:16.697Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats/client-retention","timestamp":"2025-04-09T16:12:16.698Z"}
+{"level":"info","message":"Fetching client retention statistics","timestamp":"2025-04-09T16:12:16.699Z"}
+{"level":"info","message":"Cache hit for __express__/api/stats","timestamp":"2025-04-09T16:12:24.210Z"}
+{"level":"info","message":"Cache hit for __express__/api/stats/monthly-revenue","timestamp":"2025-04-09T16:12:24.211Z"}
+{"level":"info","message":"Cache hit for __express__/api/stats/client-retention","timestamp":"2025-04-09T16:12:24.212Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats","timestamp":"2025-04-09T16:16:37.266Z"}
+{"level":"info","message":"Fetching overall statistics","timestamp":"2025-04-09T16:16:37.266Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats/monthly-revenue","timestamp":"2025-04-09T16:16:37.269Z"}
+{"level":"info","message":"Fetching monthly revenue statistics","timestamp":"2025-04-09T16:16:37.270Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats/client-retention","timestamp":"2025-04-09T16:16:37.272Z"}
+{"level":"info","message":"Fetching client retention statistics","timestamp":"2025-04-09T16:16:37.272Z"}

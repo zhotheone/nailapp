@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nail App - Appointment Management</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="logo">
+        <h1>Nail App</h1>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/" class="active"><i class="fas fa-calendar-alt"></i><span>Appointments</span></a></li>
+        <li><a href="/clients.html"><i class="fas fa-users"></i><span>Clients</span></a></li>
+        <li><a href="/procedures.html"><i class="fas fa-spa"></i><span>Procedures</span></a></li>
+        <li><a href="/stats.html"><i class="fas fa-chart-bar"></i><span>Stats</span></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="content-section appointments-section">
+      <div class="section-header">
+        <h2>Appointments</h2>
+        <button id="new-appointment-btn" class="btn btn-primary">New Appointment</button>
+      </div>
+
+      <div class="filters appointments-filters">
+        <div class="filter-group">
+          <label for="status-filter">Status:</label>
+          <select id="status-filter">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="date-filter">Date:</label>
+          <input type="date" id="date-filter">
+        </div>
+        <button id="clear-filters" class="btn btn-secondary">Clear Filters</button>
+      </div>
+
+      <div class="loader" id="appointments-loader">
+        <div class="spinner"></div>
+      </div>
+
+      <div class="data-list" id="appointments-list">
+        <!-- Appointments will be loaded here dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- FAB (Floating Action Button) -->
+  <div class="fab-container">
+    <div class="fab-options">
+      <div class="fab-option fab-option-primary fab-primary">
+        <div class="fab-option-icon">
+          <i class="fas fa-calendar-plus"></i>
+        </div>
+        <span class="fab-option-label">New Appointment</span>
+      </div>
+      <div class="fab-option fab-option-client fab-client">
+        <div class="fab-option-icon">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <span class="fab-option-label">New Client</span>
+      </div>
+      <div class="fab-option fab-option-procedure fab-procedure">
+        <div class="fab-option-icon">
+          <i class="fas fa-spa"></i>
+        </div>
+        <span class="fab-option-label">New Procedure</span>
+      </div>
+    </div>
+    <div class="fab-main">
+      <i class="fas fa-plus"></i>
+    </div>
+  </div>
+
+  <!-- Appointment Modal -->
+  <div id="appointment-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 id="modal-title">New Appointment</h2>
+      <form id="appointment-form">
+        <div class="form-group">
+          <label for="client">Client:</label>
+          <select id="client" name="clientId" required>
+            <option value="">Select a client</option>
+            <!-- Client options will be loaded dynamically -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="procedure">Procedure:</label>
+          <select id="procedure" name="procedureId" required>
+            <option value="">Select a procedure</option>
+            <!-- Procedure options will be loaded dynamically -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="appointment-date">Date:</label>
+          <input type="date" id="appointment-date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label for="appointment-time">Time:</label>
+          <input type="time" id="appointment-time" name="time" required>
+        </div>
+        <div class="form-group">
+          <label for="price">Price:</label>
+          <input type="number" id="price" name="price" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="status">Status:</label>
+          <select id="status" name="status">
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="final-price">Final Price:</label>
+          <input type="number" id="final-price" name="finalPrice" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes:</label>
+          <textarea id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/appointments.js"></script>
+</body>
+</html>

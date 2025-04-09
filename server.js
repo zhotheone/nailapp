@@ -1,0 +1,124 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const winston = require('winston');
+const NodeCache = require('node-cache');
+const dotenv = require('dotenv');
+const path = require('path');
+
+// Load environment variables
+dotenv.config();
+
+// Initialize Express
+const app = express();
+const PORT = process.env.PORT || 5000;
+const cache = new NodeCache({ stdTTL: 300 }); // 5 minute cache default
+
+// Configure logger
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
+    }),
+  ],
+});
+
+// Middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'"]
+    }
+  }
+})); // Security headers with CSP configured for local resources
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('combined')); // HTTP request logging
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Cache middleware
+const cacheMiddleware = (duration) => (req, res, next) => {
+  const key = `__express__${req.originalUrl || req.url}`;
+  const cachedBody = cache.get(key);
+  
+  if (cachedBody) {
+    logger.info(`Cache hit for ${key}`);
+    return res.send(cachedBody);
+  } else {
+    logger.info(`Cache miss for ${key}`);
+    res.sendResponse = res.send;
+    res.send = (body) => {
+      cache.set(key, body, duration);
+      res.sendResponse(body);
+    };
+    next();
+  }
+};
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+  dbName: process.env.DB_NAME,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  logger.info('MongoDB connected successfully');
+})
+.catch((err) => {
+  logger.error('MongoDB connection error: ', err);
+  process.exit(1);
+});
+
+// Import routes
+const appointmentRoutes = require('./routes/appointments');
+const clientRoutes = require('./routes/clients');
+const procedureRoutes = require('./routes/procedures');
+const statsRoutes = require('./routes/stats');
+
+// Use routes
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/procedures', procedureRoutes);
+app.use('/api/stats', statsRoutes);
+
+// Serve index.html for all non-API routes (SPA support)
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  logger.error(err.stack);
+  res.status(500).send({ error: 'Something went wrong!' });
+});
+
+// Start server
+app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT}`);
+});
+
+// Export for testing
+module.exports = app;

@@ -13,7 +13,6 @@ dotenv.config();
 
 // Initialize Express
 const app = express();
-const PORT = process.env.PORT || 5000;
 const cache = new NodeCache({ stdTTL: 300 }); // 5 minute cache default
 
 // Configure logger
@@ -116,10 +115,18 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: 'Something went wrong!' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
+// Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'API is running' });
 });
 
-// Export for testing
+// Export for testing and Vercel compatibility
 module.exports = app;
+
+// Only listen when running directly (not on Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+  });
+}

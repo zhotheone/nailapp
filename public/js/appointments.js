@@ -349,9 +349,10 @@ function initAppointments() {
     // Export schedule button
     if (exportScheduleBtn) {
       exportScheduleBtn.addEventListener('click', () => {
-        import('/js/calendar-export.js')
-          .then(module => {
-            module.exportMonthlySchedule({
+        try {
+          if (typeof exportMonthlySchedule === 'function') {
+            // If loaded directly via script tag
+            exportMonthlySchedule({
               selectedDate,
               appointments: currentAppointments,
               schedules,
@@ -361,11 +362,25 @@ function initAppointments() {
               getDayName,
               isSameDay
             });
-          })
-          .catch(error => {
-            console.error('Error loading export module:', error);
-            showMessage('error', 'Не вдалося завантажити модуль експорту. Спробуйте ще раз.');
-          });
+          } else if (window.calendarExport && typeof window.calendarExport.exportMonthlySchedule === 'function') {
+            // Alternative: if exposed through window object
+            window.calendarExport.exportMonthlySchedule({
+              selectedDate,
+              appointments: currentAppointments,
+              schedules,
+              showMessage,
+              formatDate,
+              getMonthName,
+              getDayName,
+              isSameDay
+            });
+          } else {
+            throw new Error('Calendar export functionality not available');
+          }
+        } catch (error) {
+          console.error('Error during calendar export:', error);
+          showMessage('error', 'Не вдалося експортувати календар. Спробуйте ще раз.');
+        }
       });
     }
   }

@@ -94,3 +94,7 @@
 {"level":"info","message":"Fetching all appointments","timestamp":"2025-04-10T20:05:10.875Z"}
 {"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-10T20:12:19.116Z"}
 {"level":"info","message":"Fetching all appointments","timestamp":"2025-04-10T20:12:19.116Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-10T22:07:17.637Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-10T22:07:17.637Z"}
+{"level":"info","message":"Cache miss for __express__/api/appointments","timestamp":"2025-04-10T22:12:37.774Z"}
+{"level":"info","message":"Fetching all appointments","timestamp":"2025-04-10T22:12:37.775Z"}

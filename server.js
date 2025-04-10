@@ -108,13 +108,16 @@ app.use(session({
     mongoUrl: process.env.MONGO_URI,
     dbName: process.env.DB_NAME,
     ttl: 24 * 60 * 60, // 1 day
-    autoRemove: 'native'
+    autoRemove: 'native',
+    touchAfter: 24 * 3600 // Only update the session once per day
   }),
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    // Don't require HTTPS in development
+    secure: process.env.NODE_ENV === 'production' ? false : false,
+    sameSite: 'lax', // Changed from 'strict' to 'lax' for Vercel
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    path: '/'
   }
 }));
 
@@ -145,9 +148,24 @@ app.post('/api/auth/login', async (req, res) => {
     
     // Set session
     req.session.userId = user._id;
+    req.session.isAuthenticated = true; // Add an explicit auth flag
     
-    // Send success response
-    res.json({ success: true });
+    // Save session explicitly and wait for it
+    await new Promise((resolve, reject) => {
+      req.session.save(err => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+    
+    logger.info(`User logged in: ${username}, session ID: ${req.session.id}`);
+    
+    // Send success response with session info for debugging
+    res.json({ 
+      success: true,
+      sessionId: req.session.id,
+      userId: req.session.userId
+    });
   } catch (error) {
     logger.error('Login error:', error);
     res.status(500).json({ success: false, error: 'Server error' });
@@ -166,10 +184,21 @@ app.post('/api/auth/logout', (req, res) => {
 
 // Add authentication check endpoint for Vercel compatibility
 app.get('/api/auth/check', (req, res) => {
-  if (req.session && req.session.userId) {
-    return res.json({ authenticated: true });
+  logger.info(`Auth check, session: ${JSON.stringify(req.session || {})}`);
+  
+  if (req.session && (req.session.userId || req.session.isAuthenticated)) {
+    return res.json({ 
+      authenticated: true,
+      sessionId: req.session.id,
+      userId: req.session.userId
+    });
   }
-  res.status(401).json({ authenticated: false });
+  
+  logger.warn('Auth check failed - no valid session');
+  res.status(401).json({ 
+    authenticated: false,
+    sessionInfo: req.session ? 'Session exists but no userId' : 'No session'
+  });
 });
 
 // Serve login page

@@ -16,4 +16,12 @@ router.get('/status', (req, res) => {
   res.status(401).json({ authenticated: false });
 });
 
+// Add the /check endpoint that client code is expecting
+router.get('/check', (req, res) => {
+  if (req.session && req.session.userId) {
+    return res.json({ authenticated: true });
+  }
+  res.status(401).json({ authenticated: false });
+});
+
 module.exports = router;

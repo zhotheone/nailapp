@@ -164,6 +164,14 @@ app.post('/api/auth/logout', (req, res) => {
   });
 });
 
+// Add authentication check endpoint for Vercel compatibility
+app.get('/api/auth/check', (req, res) => {
+  if (req.session && req.session.userId) {
+    return res.json({ authenticated: true });
+  }
+  res.status(401).json({ authenticated: false });
+});
+
 // Serve login page
 app.get('/login', (req, res) => {
   // If already logged in, redirect to home

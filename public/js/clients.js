@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize function for the clients page
+function initClients() {
   // DOM Elements
   const clientsList = document.getElementById('clients-list');
   const clientsLoader = document.getElementById('clients-loader');
@@ -71,6 +72,24 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const data = await response.json();
       currentClients = data;
+      
+      // Sort clients alphabetically by name, then by surname
+      currentClients.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        
+        // If names are the same, sort by surname
+        const surnameA = a.surName.toLowerCase();
+        const surnameB = b.surName.toLowerCase();
+        
+        if (surnameA < surnameB) return -1;
+        if (surnameA > surnameB) return 1;
+        
+        return 0;
+      });
       
       // If we have filters but API doesn't support them, filter locally
       if (filters.search || (filters.rating && filters.rating !== 'all')) {
@@ -169,16 +188,27 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set up event listeners
   function setupEventListeners() {
-    // Form submission
-    clientForm.addEventListener('submit', handleFormSubmit);
+    // Form submission - only add if form exists
+    if (clientForm) {
+      clientForm.addEventListener('submit', handleFormSubmit);
+    } else {
+      console.warn('Client form not found in DOM');
+    }
     
-    // Filter changes
-    clientSearch.addEventListener('input', debounce(() => {
-      applyFilters();
-    }, 300));
+    // Filter changes - only add if elements exist
+    if (clientSearch) {
+      clientSearch.addEventListener('input', debounce(() => {
+        applyFilters();
+      }, 300));
+    }
     
-    ratingFilter.addEventListener('change', applyFilters);
-    clearFiltersBtn.addEventListener('click', clearFilters);
+    if (ratingFilter) {
+      ratingFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', clearFilters);
+    }
     
     // Client detail action buttons
     if (editClientBtn) {
@@ -193,8 +223,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newAppointmentForClientBtn) {
       newAppointmentForClientBtn.addEventListener('click', () => {
         if (selectedClient) {
-          // Redirect to appointments page with client pre-selected
-          window.location.href = `/?new=true&client=${selectedClient._id}`;
+          // Use router for SPA navigation if available
+          if (window.router) {
+            window.router.navigateTo('/');
+            // Store client ID in sessionStorage to use after navigation
+            sessionStorage.setItem('selectedClientId', selectedClient._id);
+            sessionStorage.setItem('createNewAppointment', 'true');
+          } else {
+            // Fall back to traditional navigation
+            window.location.href = `/?new=true&client=${selectedClient._id}`;
+          }
         }
       });
     }
@@ -428,5 +466,13 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'cancelled': return 'Скасовано';
       default: return 'Невідомо';
     }
+  }
+}
+
+// For direct loading of the file
+document.addEventListener('DOMContentLoaded', () => {
+  // Only initialize if this page is being shown directly (not via router)
+  if (!window.router) {
+    initClients();
   }
 });

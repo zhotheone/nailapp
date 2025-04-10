@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize function for the procedures page
+function initProcedures() {
   // DOM Elements
   const proceduresList = document.getElementById('procedures-list');
   const proceduresLoader = document.getElementById('procedures-loader');
@@ -176,16 +177,27 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set up event listeners
   function setupEventListeners() {
-    // Form submission
-    procedureForm.addEventListener('submit', handleFormSubmit);
+    // Form submission - only add if form exists
+    if (procedureForm) {
+      procedureForm.addEventListener('submit', handleFormSubmit);
+    } else {
+      console.warn('Procedure form not found in DOM');
+    }
     
-    // Filter changes
-    procedureSearch.addEventListener('input', debounce(() => {
-      applyFilters();
-    }, 300));
+    // Filter changes - only add if elements exist
+    if (procedureSearch) {
+      procedureSearch.addEventListener('input', debounce(() => {
+        applyFilters();
+      }, 300));
+    }
     
-    priceFilter.addEventListener('change', applyFilters);
-    clearFiltersBtn.addEventListener('click', clearFilters);
+    if (priceFilter) {
+      priceFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', clearFilters);
+    }
     
     // Procedure detail action buttons
     if (editProcedureBtn) {
@@ -200,8 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newAppointmentForProcedureBtn) {
       newAppointmentForProcedureBtn.addEventListener('click', () => {
         if (selectedProcedure) {
-          // Redirect to appointments page with procedure pre-selected
-          window.location.href = `/?new=true&procedure=${selectedProcedure._id}`;
+          // Use router for SPA navigation if available
+          if (window.router) {
+            window.router.navigateTo('/');
+            // Store procedure ID in sessionStorage to use after navigation
+            sessionStorage.setItem('selectedProcedureId', selectedProcedure._id);
+            sessionStorage.setItem('createNewAppointment', 'true');
+          } else {
+            // Fall back to traditional navigation
+            window.location.href = `/?new=true&procedure=${selectedProcedure._id}`;
+          }
         }
       });
     }
@@ -422,5 +442,13 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'cancelled': return 'Скасовано';
       default: return 'Невідомо';
     }
+  }
+}
+
+// For direct loading of the file
+document.addEventListener('DOMContentLoaded', () => {
+  // Only initialize if this page is being shown directly (not via router)
+  if (!window.router) {
+    initProcedures();
   }
 });

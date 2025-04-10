@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savika Nail - Вхід</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+    .login-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-header img {
+      max-width: 150px;
+      margin-bottom: 1rem;
+    }
+    .login-form .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .login-form label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .login-form input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .error-message {
+      color: #eb6f92;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .login-btn {
+      width: 100%;
+      background: #6c5ce7;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .login-btn:hover {
+      background: #5549c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>Savika Nail</h1>
+      <p>Увійдіть для доступу до системи</p>
+    </div>
+    
+    <form id="login-form" class="login-form">
+      <div class="form-group">
+        <label for="username">Ім'я користувача</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      
+      <div id="error-message" class="error-message">
+        Невірне ім'я користувача або пароль
+      </div>
+      
+      <button type="submit" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Увійти
+      </button>
+    </form>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('login-form');
+      const errorMessage = document.getElementById('error-message');
+      
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        
+        errorMessage.style.display = 'none';
+        
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // Redirect to main page on successful login
+            window.location.href = '/';
+          } else {
+            // Show error message
+            errorMessage.textContent = data.error || 'Невірне ім\'я користувача або пароль';
+            errorMessage.style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          errorMessage.textContent = 'Помилка з\'єднання з сервером';
+          errorMessage.style.display = 'block';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

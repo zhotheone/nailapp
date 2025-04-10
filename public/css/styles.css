@@ -410,7 +410,7 @@ body {
   border-radius: var(--border-radius-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
   display: inline-block;
-  margin-top: var(--spacing-xs);
+  margin-top: var (--spacing-xs);
   width: 100%;
   text-align: center;
 }
@@ -1245,7 +1245,7 @@ body {
 .usage-item .status-pending {
   background-color: rgba(246, 193, 119, 0.2);
   border-radius: var(--border-radius-sm);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: var (--spacing-xs) var(--spacing-sm);
   display: inline-block;
   margin-top: var(--spacing-xs);
 }
@@ -1479,7 +1479,7 @@ body {
 .frequent-client-card {
   padding: var(--spacing-md);
   background-color: var(--overlay);
-  border-radius: var(--border-radius-md);
+  border-radius: var (--border-radius-md);
   margin-bottom: var(--spacing-sm);
   display: flex;
   justify-content: space-between;
@@ -1524,7 +1524,7 @@ body {
 
 .procedure-price,
 .client-visit-count {
-  color: var(--gold);
+  color: var (--gold);
   font-weight: 500;
 }
 
@@ -1633,4 +1633,36 @@ body {
   .schedule-days-container {
     grid-template-columns: repeat(7, 1fr);
   }
+}
+
+/* SPA Page Transitions */
+.page-content {
+  opacity: 1;
+  transition: opacity var(--animation-speed-medium) ease;
+  min-height: 70vh;
+}
+
+.page-content.page-exit {
+  opacity: 0;
+}
+
+.page-content.page-enter {
+  opacity: 0;
+}
+
+.page-content.page-enter-active {
+  opacity: 1;
+  transition: opacity var(--animation-speed-medium) ease;
+}
+
+/* Export Schedule Button */
+#export-schedule-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 10px;
+}
+
+#export-schedule-btn i {
+  font-size: 14px;
 }

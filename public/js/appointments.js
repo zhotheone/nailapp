@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Only initialize if this page is being shown directly (not via router)
+  if (!window.router) {
+    initAppointments();
+  }
+});
+
+// Initialize function for the appointments page
+function initAppointments() {
   // DOM Elements
   const appointmentsLoader = document.getElementById('appointments-loader');
   const appointmentModal = document.getElementById('appointment-modal');
@@ -13,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const appointmentTimeInput = document.getElementById('appointment-time');
   const appointmentDateInput = document.getElementById('appointment-date');
   const availableTimesContainer = document.getElementById('available-times');
+  const exportScheduleBtn = document.getElementById('export-schedule-btn');
   
   // Appointment detail modal elements
   const appointmentDetailModal = document.getElementById('appointment-detail-modal');
@@ -86,6 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
       renderWeeklyView(currentDate);
       updateMonthCalendar(currentDate);
       
+      // Initialize notifications system
+      if (window.notificationSystem) {
+        window.notificationSystem.init();
+        checkForTodaysAppointments();
+      }
+      
       // Check URL parameters for pre-selected client or procedure
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('client')) {
@@ -139,6 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const data = await response.json();
       currentAppointments = data;
+      
+      // Schedule notification reminders for confirmed appointments
+      if (window.notificationSystem) {
+        window.notificationSystem.scheduleAllReminders(currentAppointments);
+      }
       
       // Update views with the new data
       if (currentView === 'weekly') {
@@ -324,6 +344,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (cancelAppointmentBtn) {
       cancelAppointmentBtn.addEventListener('click', cancelSelectedAppointment);
+    }
+
+    // Export schedule button
+    if (exportScheduleBtn) {
+      exportScheduleBtn.addEventListener('click', exportMonthlySchedule);
     }
   }
   
@@ -568,6 +593,15 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadAppointments();
       closeModal(appointmentDetailModal);
       showMessage('success', 'Статус запису успішно оновлено!');
+      
+      // If status changed to confirmed, schedule notification
+      if (newStatus === 'confirmed' && window.notificationSystem) {
+        const updatedAppointments = await (await fetch(API.appointments)).json();
+        const updatedAppointment = updatedAppointments.find(a => a._id === selectedAppointment._id);
+        if (updatedAppointment) {
+          window.notificationSystem.scheduleAppointmentReminder(updatedAppointment);
+        }
+      }
     } catch (error) {
       console.error('Помилка зміни статусу запису:', error);
       showMessage('error', 'Не вдалося оновити статус запису. Будь ласка, спробуйте пізніше.');
@@ -1078,7 +1112,19 @@ document.addEventListener('DOMContentLoaded', () => {
       
       closeModal(appointmentModal);
       showMessage('success', `Запис успішно ${currentAppointmentId ? 'оновлено' : 'створено'}!`);
-      loadAppointments();
+      await loadAppointments();
+      
+      // If this was a new appointment or status changed to confirmed, schedule notification
+      if (appointmentData.status === 'confirmed' && window.notificationSystem) {
+        const updatedAppointments = await (await fetch(API.appointments)).json();
+        const newAppointment = currentAppointmentId 
+          ? updatedAppointments.find(a => a._id === currentAppointmentId)
+          : updatedAppointments[updatedAppointments.length - 1]; // Assume last one is the new one
+          
+        if (newAppointment) {
+          window.notificationSystem.scheduleAppointmentReminder(newAppointment);
+        }
+      }
     } catch (error) {
       console.error('Помилка збереження запису:', error);
       showMessage('error', 'Не вдалося зберегти запис. Будь ласка, спробуйте пізніше.');
@@ -1146,4 +1192,363 @@ document.addEventListener('DOMContentLoaded', () => {
       default: return 'Невідомо';
     }
   }
-});
+  
+  // Check for today's appointments and notify
+  function checkForTodaysAppointments() {
+    if (!window.notificationSystem || !currentAppointments || currentAppointments.length === 0) {
+      return;
+    }
+    
+    const today = new Date();
+    const todaysAppointments = currentAppointments.filter(appointment => {
+      const appointmentDate = new Date(appointment.time);
+      return isSameDay(appointmentDate, today);
+    });
+    
+    if (todaysAppointments.length > 0) {
+      window.notificationSystem.notifyTodaysAppointments(todaysAppointments);
+    }
+  }
+
+  /**
+   * Export the monthly schedule as a PNG
+   */
+  function exportMonthlySchedule() {
+    // Show a loading message
+    showMessage('info', 'Генерація розкладу...');
+    
+    // Get current month and year
+    const currentMonthDate = selectedDate || new Date();
+    const year = currentMonthDate.getFullYear();
+    const month = currentMonthDate.getMonth();
+    const monthName = getMonthName(month);
+    
+    // Create a canvas element with wider dimensions
+    const canvas = document.createElement('canvas');
+    canvas.width = 1600;  // Wide format for a calendar layout
+    canvas.height = 1200; // Taller to fit the entire month
+    document.body.appendChild(canvas); // Temporarily add to DOM for rendering
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Get rose-pine moon color scheme
+    const rosePine = {
+      base: '#232136',        // Dark background
+      surface: '#2a273f',     // Slightly lighter background
+      overlay: '#393552',     // For overlays and borders
+      muted: '#6e6a86',       // Muted text
+      subtle: '#908caa',      // Subtle elements
+      text: '#e0def4',        // Main text color
+      love: '#eb6f92',        // Accent pink/red (for booked)
+      gold: '#f6c177',        // Gold for special elements
+      rose: '#ea9a97',        // Softer pink
+      pine: '#3e8fb0',        // Blue-green
+      foam: '#9ccfd8',        // Teal (for available)
+      iris: '#c4a7e7'         // Purple for highlights
+    };
+    
+    // Update app colors with rose-pine moon theme
+    const appColors = {
+      background: rosePine.base,
+      primary: rosePine.iris,      // Primary brand color
+      secondary: rosePine.subtle,  // Secondary elements
+      text: rosePine.text,         // Main text
+      lightText: rosePine.muted,   // Secondary text
+      border: rosePine.overlay,    // Borders
+      weekend: rosePine.rose,      // Weekend highlighting
+      available: rosePine.foam,    // Available slots
+      booked: rosePine.love,       // Booked slots
+      headerBg: rosePine.surface,  // Header backgrounds
+      alternateRow: rosePine.overlay // Alternating rows
+    };
+    
+    // Fill background
+    ctx.fillStyle = appColors.background;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw app-like header bar
+    ctx.fillStyle = appColors.primary;
+    ctx.fillRect(0, 0, canvas.width, 60);
+    
+    // Set title
+    ctx.fillStyle = appColors.text;
+    ctx.font = 'bold 32px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Розклад на ${monthName} ${year}`, canvas.width / 2, 40);
+    
+    // Draw legend with app-like styling
+    ctx.fillStyle = appColors.headerBg;
+    ctx.fillRect(0, 60, canvas.width, 40);
+    
+    ctx.fillStyle = appColors.text;
+    ctx.font = '16px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    
+    // Draw legend with colored indicators
+    const legendY = 85;
+    const legendSpacing = 250;
+    
+    // Available indicator
+    ctx.fillStyle = appColors.available;
+    ctx.fillRect(50, legendY - 15, 20, 20);
+    ctx.fillStyle = appColors.text;
+    ctx.fillText('Доступно', 80, legendY);
+    
+    // Booked indicator
+    ctx.fillStyle = appColors.booked;
+    ctx.fillRect(50 + legendSpacing, legendY - 15, 20, 20);
+    ctx.fillStyle = appColors.text;
+    ctx.fillText('Заброньовано', 80 + legendSpacing, legendY);
+    
+    // Weekend indicator
+    ctx.fillStyle = appColors.weekend;
+    ctx.fillRect(50 + (legendSpacing * 2), legendY - 15, 20, 20);
+    ctx.fillStyle = appColors.text;
+    ctx.fillText('Вихідний', 80 + (legendSpacing * 2), legendY);
+    
+    // Calendar layout settings
+    const startY = 120;
+    const dayWidth = Math.floor((canvas.width - 60) / 7); // 7 days in a week
+    const dayHeight = 150; // Height for each day cell
+    const dayPadding = 10; // Padding inside each day cell
+    const weekdayNames = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота', 'Неділя'];
+    const weekdayHints = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'НД'];
+    
+    // Draw weekday headers
+    for (let i = 0; i < 7; i++) {
+      ctx.fillStyle = appColors.headerBg;
+      ctx.fillRect(30 + (i * dayWidth), startY, dayWidth, 40);
+      
+      ctx.fillStyle = appColors.text;
+      ctx.font = 'bold 16px Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(weekdayNames[i], 30 + (i * dayWidth) + (dayWidth / 2), startY + 25);
+      
+      // Add subtle border
+      ctx.strokeStyle = appColors.border;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(30 + (i * dayWidth), startY, dayWidth, 40);
+    }
+    
+    // Get calendar data for the month
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    // Get the first day of week (0 = Sunday, 1 = Monday, etc.)
+    let firstDayOfWeek = firstDay.getDay();
+    if (firstDayOfWeek === 0) firstDayOfWeek = 7; // Adjust Sunday to be 7 instead of 0
+    firstDayOfWeek--; // Adjust to 0-based for Monday (0 = Monday, 6 = Sunday)
+    
+    // Calculate the number of weeks needed
+    const weeksInMonth = Math.ceil((daysInMonth + firstDayOfWeek) / 7);
+    
+    // Adjust the canvas height based on the number of weeks
+    canvas.height = startY + 40 + (weeksInMonth * dayHeight) + 80; // Extra space for watermark
+    
+    // Draw calendar grid
+    for (let week = 0; week < weeksInMonth; week++) {
+      for (let day = 0; day < 7; day++) {
+        const dayNum = (week * 7) + day + 1 - firstDayOfWeek;
+        const x = 30 + (day * dayWidth);
+        const y = startY + 40 + (week * dayHeight);
+        
+        // Draw day cell background
+        if (dayNum > 0 && dayNum <= daysInMonth) {
+          // Valid day in month
+          const date = new Date(year, month, dayNum);
+          const dayOfWeek = date.getDay();
+          const isToday = isSameDay(date, new Date());
+          
+          // Check if it's a weekend
+          const daySchedule = schedules.find(s => s.dayOfWeek === dayOfWeek);
+          const isWeekendDay = daySchedule ? daySchedule.isWeekend : (dayOfWeek === 0 || dayOfWeek === 6);
+          
+          // Fill background based on weekend or day type
+          if (isWeekendDay) {
+            ctx.fillStyle = appColors.weekend;
+          } else if (isToday) {
+            ctx.fillStyle = appColors.primary;
+          } else {
+            ctx.fillStyle = appColors.headerBg;
+          }
+          
+          ctx.fillRect(x, y, dayWidth, dayHeight);
+          
+          // Draw border
+          ctx.strokeStyle = appColors.border;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x, y, dayWidth, dayHeight);
+          
+          // Draw day number with weekday hint
+          ctx.fillStyle = appColors.text;
+          ctx.font = 'bold 18px Arial, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(dayNum.toString(), x + dayPadding, y + dayPadding + 18);
+          
+          // Add weekday hint
+          ctx.font = 'bold 12px Arial, sans-serif';
+          ctx.fillStyle = isWeekendDay ? rosePine.gold : rosePine.subtle;
+          ctx.fillText(weekdayHints[dayOfWeek === 0 ? 6 : dayOfWeek - 1], x + dayPadding + 30, y + dayPadding + 18);
+          
+          // Render time slots for this day if not a weekend
+          if (!isWeekendDay) {
+            if (daySchedule && daySchedule.timeTable) {
+              const timeSlots = Object.values(daySchedule.timeTable).filter(Boolean);
+              timeSlots.sort(); // Sort chronologically
+              
+              // Max slots to display per day (to avoid overflow)
+              const maxDisplaySlots = 6;
+              const displaySlots = timeSlots.slice(0, maxDisplaySlots);
+              
+              if (displaySlots.length > 0) {
+                // Draw time slots with availability
+                displaySlots.forEach((timeSlot, i) => {
+                  // Check if this slot is booked
+                  const slotDate = new Date(date);
+                  const [hours, minutes] = timeSlot.split(':');
+                  slotDate.setHours(parseInt(hours), parseInt(minutes));
+                  
+                  const isBooked = currentAppointments.some(a => {
+                    const appTime = new Date(a.time);
+                    return isSameDay(appTime, date) && 
+                          appTime.getHours() === parseInt(hours) && 
+                          appTime.getMinutes() === parseInt(minutes);
+                  });
+                  
+                  // Draw slot with pill-shaped background
+                  const pillX = x + dayPadding;
+                  const pillY = y + 50 + (i * 18);
+                  const pillWidth = dayWidth - (dayPadding * 2);
+                  const pillHeight = 16;
+                  
+                  // Draw rounded rectangle
+                  ctx.fillStyle = isBooked ? appColors.booked : appColors.available;
+                  roundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 8);
+                  
+                  // Draw time text
+                  ctx.fillStyle = appColors.text;
+                  ctx.font = '12px Arial, sans-serif';
+                  ctx.textAlign = 'left';
+                  ctx.fillText(
+                    `${timeSlot} - ${isBooked ? 'Заброньовано' : 'Доступно'}`,
+                    pillX + 6,
+                    pillY + 12
+                  );
+                });
+                
+                // Show indicator if there are more slots than we display
+                if (timeSlots.length > maxDisplaySlots) {
+                  ctx.fillStyle = appColors.lightText;
+                  ctx.font = 'italic 12px Arial, sans-serif';
+                  ctx.fillText(
+                    `+ ще ${timeSlots.length - maxDisplaySlots} слотів...`,
+                    x + dayPadding,
+                    y + dayHeight - dayPadding
+                  );
+                }
+              } else {
+                // No time slots available
+                ctx.fillStyle = appColors.lightText;
+                ctx.font = 'italic 12px Arial, sans-serif';
+                ctx.fillText(
+                  'Немає доступних часів',
+                  x + dayPadding,
+                  y + 60
+                );
+              }
+            } else {
+              // No schedule defined
+              ctx.fillStyle = appColors.lightText;
+              ctx.font = 'italic 12px Arial, sans-serif';
+              ctx.fillText(
+                'Розклад не налаштовано',
+                x + dayPadding,
+                y + 60
+              );
+            }
+          } else {
+            // Weekend message
+            ctx.fillStyle = appColors.text;
+            ctx.font = 'italic 12px Arial, sans-serif';
+            ctx.fillText(
+              'Вихідний день',
+              x + dayPadding,
+              y + 60
+            );
+          }
+        } else {
+          // Empty day (not part of this month)
+          ctx.fillStyle = rosePine.base;
+          ctx.fillRect(x, y, dayWidth, dayHeight);
+          
+          // Draw border
+          ctx.strokeStyle = appColors.border;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x, y, dayWidth, dayHeight);
+        }
+      }
+    }
+    
+    // Add watermark
+    ctx.font = 'italic 24px Arial, sans-serif';
+    ctx.fillStyle = 'rgba(224, 222, 244, 0.2)'; // semi-transparent text
+    ctx.textAlign = 'center';
+    ctx.fillText('@savika_nail', canvas.width / 2, canvas.height - 30);
+    
+    // Draw decorative bottom border
+    const gradient = ctx.createLinearGradient(0, canvas.height - 10, canvas.width, canvas.height - 10);
+    gradient.addColorStop(0, rosePine.rose);
+    gradient.addColorStop(0.5, rosePine.iris);
+    gradient.addColorStop(1, rosePine.foam);
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+    
+    // Convert canvas to PNG data URL
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      
+      // Create download link
+      const downloadLink = document.createElement('a');
+      downloadLink.href = dataUrl;
+      downloadLink.download = `savika-calendar-${monthName}-${year}.png`;
+      
+      // Add to document, click to trigger download, then remove
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      // Clean up
+      document.body.removeChild(canvas);
+      
+      showMessage('success', 'Календар успішно експортовано!');
+    } catch (error) {
+      console.error('Error exporting calendar:', error);
+      showMessage('error', 'Помилка експорту календаря. Спробуйте ще раз.');
+      
+      // Make sure to clean up
+      if (document.body.contains(canvas)) {
+        document.body.removeChild(canvas);
+      }
+    }
+  }
+  
+  /**
+   * Helper function to draw a rounded rectangle
+   */
+  function roundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+  }
+}

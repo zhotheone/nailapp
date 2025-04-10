@@ -39,21 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Set active nav link
-  const currentPath = window.location.pathname;
-  const navItems = document.querySelectorAll('.nav-links a');
+  // Set active nav link - managed by router now for SPA
+  // No need to set active nav link here as the router handles it
   
-  navItems.forEach(item => {
-    const itemPath = item.getAttribute('href');
-    if (currentPath === itemPath || 
-        (currentPath === '/' && itemPath === '/') || 
-        (currentPath.includes(itemPath) && itemPath !== '/')) {
-      item.classList.add('active');
-    } else {
-      item.classList.remove('active');
-    }
-  });
-
   // FAB functionality
   const fabMain = document.querySelector('.fab-main');
   const fabOptions = document.querySelector('.fab-options');
@@ -74,105 +62,116 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Configure primary FAB action based on current page
-    const currentPage = window.location.pathname;
+    // Configure primary FAB action based on current route
+    updateFabActions();
+  }
+  
+  // Update FAB actions based on current route
+  function updateFabActions() {
+    const currentRoute = window.router ? window.router.currentRoute : window.location.pathname;
     const primaryFabOption = document.querySelector('.fab-option-primary');
     
     if (primaryFabOption) {
       const primaryIcon = primaryFabOption.querySelector('i');
       const primaryLabel = primaryFabOption.querySelector('.fab-option-label');
       
-      if (currentPage.includes('/clients.html')) {
+      if (currentRoute.includes('/clients')) {
         primaryIcon.className = 'fas fa-user-plus';
-        primaryLabel.textContent = 'New Client';
-        primaryFabOption.addEventListener('click', () => {
-          openNewClientModal();
-        });
-      } else if (currentPage.includes('/procedures.html')) {
+        primaryLabel.textContent = 'Новий клієнт';
+        primaryFabOption.addEventListener('click', openNewClientModal);
+      } else if (currentRoute.includes('/procedures')) {
         primaryIcon.className = 'fas fa-spa';
-        primaryLabel.textContent = 'New Procedure';
-        primaryFabOption.addEventListener('click', () => {
-          openNewProcedureModal();
-        });
+        primaryLabel.textContent = 'Нова процедура';
+        primaryFabOption.addEventListener('click', openNewProcedureModal);
       } else {
         // Default to appointments
         primaryIcon.className = 'fas fa-calendar-plus';
-        primaryLabel.textContent = 'New Appointment';
-        primaryFabOption.addEventListener('click', () => {
-          openNewAppointmentModal();
-        });
+        primaryLabel.textContent = 'Новий запис';
+        primaryFabOption.addEventListener('click', openNewAppointmentModal);
       }
-    }
-    
-    // Setup secondary FAB actions
-    const clientFabOption = document.querySelector('.fab-option-client');
-    if (clientFabOption) {
-      clientFabOption.addEventListener('click', () => {
-        window.location.href = '/clients.html?new=true';
-      });
-    }
-    
-    const procedureFabOption = document.querySelector('.fab-option-procedure');
-    if (procedureFabOption) {
-      procedureFabOption.addEventListener('click', () => {
-        window.location.href = '/procedures.html?new=true';
-      });
     }
   }
   
   // Helper functions for opening modals
-  function openNewAppointmentModal() {
+  function openNewAppointmentModal(clientId, procedureId) {
     const modal = document.getElementById('appointment-modal');
     if (modal) {
-      document.getElementById('modal-title').textContent = 'New Appointment';
+      document.getElementById('modal-title').textContent = 'Новий запис';
       // Reset the form
       document.getElementById('appointment-form').reset();
       // Set default date to today
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('appointment-date').value = today;
+      
+      // Pre-select client if client ID is provided
+      if (clientId && document.getElementById('client')) {
+        document.getElementById('client').value = clientId;
+      }
+      
+      // Pre-select procedure if procedure ID is provided
+      if (procedureId && document.getElementById('procedure')) {
+        const procedureSelect = document.getElementById('procedure');
+        procedureSelect.value = procedureId;
+        
+        // Auto-fill price if procedure is selected
+        const selectedOption = procedureSelect.options[procedureSelect.selectedIndex];
+        if (selectedOption && selectedOption.dataset.price && document.getElementById('price')) {
+          document.getElementById('price').value = selectedOption.dataset.price;
+        }
+      }
+      
       // Show the modal
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
+      openModal(modal);
     } else {
-      window.location.href = '/?new=true';
+      if (window.router) {
+        window.router.navigateTo('/');
+        // Store parameters in sessionStorage for later use
+        if (clientId) sessionStorage.setItem('selectedClientId', clientId);
+        if (procedureId) sessionStorage.setItem('selectedProcedureId', procedureId);
+        sessionStorage.setItem('createNewAppointment', 'true');
+      } else {
+        let url = '/?new=true';
+        if (clientId) url += `&client=${clientId}`;
+        if (procedureId) url += `&procedure=${procedureId}`;
+        window.location.href = url;
+      }
     }
   }
   
   function openNewClientModal() {
     const modal = document.getElementById('client-modal');
     if (modal) {
-      document.getElementById('client-modal-title').textContent = 'New Client';
+      document.getElementById('client-modal-title').textContent = 'Новий клієнт';
       document.getElementById('client-form').reset();
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
+      openModal(modal);
     } else {
-      window.location.href = '/clients.html?new=true';
+      if (window.router) {
+        window.router.navigateTo('/clients');
+        setTimeout(() => openNewClientModal(), 100);
+      } else {
+        window.location.href = '/clients.html?new=true';
+      }
     }
   }
   
   function openNewProcedureModal() {
     const modal = document.getElementById('procedure-modal');
     if (modal) {
-      document.getElementById('procedure-modal-title').textContent = 'New Procedure';
+      document.getElementById('procedure-modal-title').textContent = 'Нова процедура';
       document.getElementById('procedure-form').reset();
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
+      openModal(modal);
     } else {
-      window.location.href = '/procedures.html?new=true';
+      if (window.router) {
+        window.router.navigateTo('/procedures');
+        setTimeout(() => openNewProcedureModal(), 100);
+      } else {
+        window.location.href = '/procedures.html?new=true';
+      }
     }
   }
   
-  // Check URL params to see if we should open a modal
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('new') === 'true') {
-    const currentPage = window.location.pathname;
-    
-    if (currentPage.includes('/clients.html')) {
-      setTimeout(openNewClientModal, 500);
-    } else if (currentPage.includes('/procedures.html')) {
-      setTimeout(openNewProcedureModal, 500);
-    } else if (currentPage === '/' || currentPage.includes('/index.html')) {
-      setTimeout(openNewAppointmentModal, 500);
-    }
+  // Listen for route changes to update FAB
+  if (window.router) {
+    document.addEventListener('route-changed', updateFabActions);
   }
 });

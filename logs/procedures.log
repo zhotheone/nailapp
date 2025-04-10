@@ -83,3 +83,67 @@
 {"level":"info","message":"Fetching all procedures","timestamp":"2025-04-09T17:49:45.525Z"}
 {"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-09T21:26:01.539Z"}
 {"level":"info","message":"Fetching all procedures","timestamp":"2025-04-09T21:26:01.539Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T09:19:31.411Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T09:19:31.411Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:19:36.523Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:19:36.528Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:19:39.290Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:19:39.301Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T09:41:43.993Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T09:41:43.994Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:41:49.198Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:41:49.201Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:42:05.813Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:42:05.821Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:42:05.844Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:42:05.869Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:42:05.891Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:42:05.933Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T09:45:15.631Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T09:45:15.632Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:29.513Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:29.520Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:33.156Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:33.168Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:44.945Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:44.955Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:44.964Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:44.980Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:46.909Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:45:46.915Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:46:11.871Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T09:46:11.874Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T10:04:59.594Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T10:04:59.594Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:05:39.646Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:05:39.655Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T10:28:48.298Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T10:28:48.299Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:09.772Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:09.775Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:13.888Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:13.897Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:21.501Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:21.561Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:23.011Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:29:51.984Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:30:10.589Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T10:30:10.596Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T11:11:38.670Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T11:11:38.671Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T11:21:06.854Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T11:21:06.854Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T11:41:47.436Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T11:41:47.436Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T11:41:58.060Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T11:41:58.061Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T11:46:41.007Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T11:46:41.007Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T14:08:14.277Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T14:08:14.277Z"}
+{"level":"info","message":"Cache miss for __express__/api/procedures","timestamp":"2025-04-10T14:20:17.755Z"}
+{"level":"info","message":"Fetching all procedures","timestamp":"2025-04-10T14:20:17.755Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T14:20:21.457Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T14:20:21.461Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T14:20:23.289Z"}
+{"level":"info","message":"Cache hit for __express__/api/procedures","timestamp":"2025-04-10T14:20:23.296Z"}

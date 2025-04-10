@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize function for the stats page
+function initStats() {
   // DOM Elements
   const statsLoader = document.getElementById('stats-loader');
   const statsContent = document.getElementById('stats-content');
@@ -10,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const frequentClientsList = document.getElementById('frequent-clients-list');
   
   // Chart contexts
-  const statusChartCtx = document.getElementById('status-chart').getContext('2d');
-  const revenueChartCtx = document.getElementById('revenue-chart').getContext('2d');
-  const retentionChartCtx = document.getElementById('retention-chart').getContext('2d');
+  const statusChartCtx = document.getElementById('status-chart')?.getContext('2d');
+  const revenueChartCtx = document.getElementById('revenue-chart')?.getContext('2d');
+  const retentionChartCtx = document.getElementById('retention-chart')?.getContext('2d');
   
   // Charts
   let statusChart, revenueChart, retentionChart;
@@ -46,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize function
   async function init() {
     try {
+      // Clear any existing chart instances first
+      destroyCharts();
+      
       // Load all the data
       const [stats, monthlyRevenue, clientRetention] = await Promise.all([
         fetchStats(),
@@ -63,10 +67,52 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Show the stats content
       hideLoader(statsLoader, statsContent);
-      statsContent.style.display = 'block';
+      if (statsContent) {
+        statsContent.style.display = 'block';
+      }
     } catch (error) {
       console.error('Помилка ініціалізації сторінки статистики:', error);
       showMessage('error', 'Не вдалося завантажити статистику. Будь ласка, спробуйте пізніше.');
+    }
+  }
+  
+  // Destroy any existing chart instances to prevent canvas reuse error
+  function destroyCharts() {
+    if (statusChart) {
+      statusChart.destroy();
+      statusChart = null;
+    }
+    
+    if (revenueChart) {
+      revenueChart.destroy();
+      revenueChart = null;
+    }
+    
+    if (retentionChart) {
+      retentionChart.destroy();
+      retentionChart = null;
+    }
+    
+    // Alternative method for Chart.js v3+ - use getChart() instead of instances
+    // First, make sure we're accessing canvases safely
+    const statusChartElement = document.getElementById('status-chart');
+    const revenueChartElement = document.getElementById('revenue-chart');
+    const retentionChartElement = document.getElementById('retention-chart');
+    
+    // Try to get existing chart instances by canvas and destroy them
+    try {
+      // Chart.js v3+ supports getChart method
+      if (typeof Chart.getChart === 'function') {
+        const statusChartInstance = statusChartElement ? Chart.getChart(statusChartElement) : null;
+        const revenueChartInstance = revenueChartElement ? Chart.getChart(revenueChartElement) : null;
+        const retentionChartInstance = retentionChartElement ? Chart.getChart(retentionChartElement) : null;
+        
+        if (statusChartInstance) statusChartInstance.destroy();
+        if (revenueChartInstance) revenueChartInstance.destroy();
+        if (retentionChartInstance) retentionChartInstance.destroy();
+      }
+    } catch (e) {
+      console.warn('Failed to destroy charts using Chart.getChart:', e);
     }
   }
   
@@ -113,6 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Create the appointment status chart
   function createStatusChart(appointmentStats) {
+    if (!statusChartCtx) {
+      console.warn('Status chart canvas context not found');
+      return;
+    }
+    
     const data = {
       labels: ['Очікує', 'Підтверджено', 'Завершено', 'Скасовано'],
       datasets: [{
@@ -417,5 +468,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       frequentClientsList.appendChild(card);
     });
+  }
+}
+
+// For direct loading of the file
+document.addEventListener('DOMContentLoaded', () => {
+  // Only initialize if this page is being shown directly (not via router)
+  if (!window.router) {
+    initStats();
   }
 });

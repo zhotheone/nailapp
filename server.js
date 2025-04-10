@@ -7,6 +7,12 @@ const winston = require('winston');
 const NodeCache = require('node-cache');
 const dotenv = require('dotenv');
 const path = require('path');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const bcrypt = require('bcrypt');
+const User = require('./models/User');
+const authRoutes = require('./routes/auth');
+const { isAuthenticated, login, logout } = require('./middleware/auth');
 
 // Load environment variables
 dotenv.config();
@@ -92,6 +98,81 @@ mongoose.connect(process.env.MONGO_URI, {
   process.exit(1);
 });
 
+// Configure session management
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'savika-nail-app-secret-key-change-in-production',
+  name: 'savika.sid',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    dbName: process.env.DB_NAME,
+    ttl: 24 * 60 * 60, // 1 day
+    autoRemove: 'native'
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize default admin user
+mongoose.connection.once('open', async () => {
+  await User.initAdminUser();
+});
+
+// Apply authentication middleware to all routes
+app.use(isAuthenticated);
+
+// Authentication routes
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Find user
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+    
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+    
+    // Set session
+    req.session.userId = user._id;
+    
+    // Send success response
+    res.json({ success: true });
+  } catch (error) {
+    logger.error('Login error:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      logger.error('Logout error:', err);
+      return res.status(500).json({ success: false, error: 'Failed to logout' });
+    }
+    res.json({ success: true });
+  });
+});
+
+// Serve login page
+app.get('/login', (req, res) => {
+  // If already logged in, redirect to home
+  if (req.session && req.session.userId) {
+    return res.redirect('/');
+  }
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // Import routes
 const appointmentRoutes = require('./routes/appointments');
 const clientRoutes = require('./routes/clients');
@@ -104,6 +185,7 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/procedures', procedureRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/schedules', require('./routes/schedules'));
+app.use('/api/auth', authRoutes);
 
 // Serve index.html for all non-API routes (SPA support)
 app.get('*', (req, res, next) => {

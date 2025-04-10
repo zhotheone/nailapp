@@ -19,8 +19,8 @@
     "node-cache": "^5.1.2",
     "winston": "^3.8.2",
     "express-session": "^1.17.3",
-    "bcrypt": "^5.1.1",
-    "connect-mongo": "^5.1.0",
+    "bcrypt": "^5.1.0",
+    "connect-mongo": "^5.0.0",
     "csurf": "^1.11.0",
     "express-rate-limit": "^7.1.5"
   },

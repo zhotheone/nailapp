@@ -100,3 +100,12 @@
 {"level":"info","message":"Cache hit for __express__/api/stats/monthly-revenue","timestamp":"2025-04-10T14:20:21.982Z"}
 {"level":"info","message":"Cache hit for __express__/api/stats/client-retention","timestamp":"2025-04-10T14:20:21.996Z"}
 {"level":"info","message":"Cache hit for __express__/api/stats","timestamp":"2025-04-10T14:20:22.468Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats","timestamp":"2025-04-10T18:25:36.991Z"}
+{"level":"info","message":"Fetching overall statistics","timestamp":"2025-04-10T18:25:36.992Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats/monthly-revenue","timestamp":"2025-04-10T18:25:36.994Z"}
+{"level":"info","message":"Fetching monthly revenue statistics","timestamp":"2025-04-10T18:25:36.994Z"}
+{"level":"info","message":"Cache miss for __express__/api/stats/client-retention","timestamp":"2025-04-10T18:25:36.997Z"}
+{"level":"info","message":"Fetching client retention statistics","timestamp":"2025-04-10T18:25:36.997Z"}
+{"level":"info","message":"Cache hit for __express__/api/stats/monthly-revenue","timestamp":"2025-04-10T18:25:37.250Z"}
+{"level":"info","message":"Cache hit for __express__/api/stats/client-retention","timestamp":"2025-04-10T18:25:37.257Z"}
+{"level":"info","message":"Cache hit for __express__/api/stats","timestamp":"2025-04-10T18:25:37.757Z"}

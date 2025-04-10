@@ -39,32 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Set active nav link - managed by router now for SPA
-  // No need to set active nav link here as the router handles it
-  
-  // FAB functionality
-  const fabMain = document.querySelector('.fab-main');
-  const fabOptions = document.querySelector('.fab-options');
-  const fabOptionButtons = document.querySelectorAll('.fab-option');
-  
-  if (fabMain) {
-    fabMain.addEventListener('click', () => {
-      fabMain.classList.toggle('active');
-      fabOptions.classList.toggle('active');
-    });
-    
-    // Close FAB when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.fab-container') && 
-          fabOptions.classList.contains('active')) {
-        fabMain.classList.remove('active');
-        fabOptions.classList.remove('active');
-      }
-    });
-    
-    // Configure primary FAB action based on current route
-    updateFabActions();
-  }
+  // REMOVE the FAB initialization code from here to prevent duplicates
+  // Instead just configure FAB actions based on current route
+  updateFabActions();
   
   // Update FAB actions based on current route
   function updateFabActions() {
@@ -72,22 +49,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const primaryFabOption = document.querySelector('.fab-option-primary');
     
     if (primaryFabOption) {
-      const primaryIcon = primaryFabOption.querySelector('i');
-      const primaryLabel = primaryFabOption.querySelector('.fab-option-label');
+      // Clear existing event listeners
+      const newPrimaryFabOption = primaryFabOption.cloneNode(true);
+      primaryFabOption.parentNode.replaceChild(newPrimaryFabOption, primaryFabOption);
+      
+      const primaryIcon = newPrimaryFabOption.querySelector('i');
+      const primaryLabel = newPrimaryFabOption.querySelector('.fab-option-label');
       
       if (currentRoute.includes('/clients')) {
         primaryIcon.className = 'fas fa-user-plus';
         primaryLabel.textContent = 'Новий клієнт';
-        primaryFabOption.addEventListener('click', openNewClientModal);
+        newPrimaryFabOption.addEventListener('click', openNewClientModal);
       } else if (currentRoute.includes('/procedures')) {
         primaryIcon.className = 'fas fa-spa';
         primaryLabel.textContent = 'Нова процедура';
-        primaryFabOption.addEventListener('click', openNewProcedureModal);
+        newPrimaryFabOption.addEventListener('click', openNewProcedureModal);
       } else {
         // Default to appointments
         primaryIcon.className = 'fas fa-calendar-plus';
         primaryLabel.textContent = 'Новий запис';
-        primaryFabOption.addEventListener('click', openNewAppointmentModal);
+        newPrimaryFabOption.addEventListener('click', openNewAppointmentModal);
       }
     }
   }

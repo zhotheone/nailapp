@@ -17,44 +17,40 @@ const loginLimiter = rateLimit({
 /**
  * Middleware to check if user is authenticated
  */
-async function isAuthenticated(req, res, next) {
-  // Allow access to authentication endpoints
+const isAuthenticated = async (req, res, next) => {
+  // Skip authentication for login page and login API
   if (req.path === '/login' || req.path === '/api/auth/login') {
     return next();
   }
   
-  // Check if session exists and user is authenticated
-  if (req.session?.userId) {
+  // Check if user is logged in
+  if (req.session && req.session.userId) {
     try {
-      // Verify the user still exists and is active
+      // Verify user exists
       const user = await User.findById(req.session.userId);
-      
-      if (user && user.active) {
-        // Add user to request object for convenience
+      if (user) {
+        // Add user to request for convenience
         req.user = user;
         return next();
       }
     } catch (err) {
-      console.error('Session validation error:', err);
+      console.error('Authentication error:', err);
     }
-    
-    // If we get here, session is invalid, destroy it
-    req.session.destroy();
   }
   
-  // For API routes, return 401 Unauthorized
+  // API routes return 401
   if (req.path.startsWith('/api/')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // For page requests, redirect to login page
+  // Redirect to login page
   res.redirect('/login');
-}
+};
 
 /**
  * Login handler
  */
-async function login(req, res) {
+const login = async (req, res) => {
   try {
     const { username, password } = req.body;
     
@@ -117,12 +113,12 @@ async function login(req, res) {
     console.error('Login error:', error);
     res.status(500).json({ success: false, error: 'Server error during login' });
   }
-}
+};
 
 /**
  * Logout handler
  */
-function logout(req, res) {
+const logout = (req, res) => {
   req.session.destroy(err => {
     if (err) {
       console.error('Error destroying session:', err);
@@ -135,8 +131,9 @@ function logout(req, res) {
     res.clearCookie('connect.sid');
     res.json({ success: true });
   });
-}
+};
 
+// Export all functions consistently
 module.exports = {
   isAuthenticated,
   login,

@@ -12,10 +12,12 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f5f5f5;
+      background-color: #232136;
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
     .login-container {
-      background-color: white;
+      background-color: #2a273f;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       width: 100%;
@@ -26,9 +28,9 @@
       text-align: center;
       margin-bottom: 2rem;
     }
-    .login-header img {
-      max-width: 150px;
-      margin-bottom: 1rem;
+    .login-header h1 {
+      color: #c4a7e7;
+      margin-bottom: 0.5rem;
     }
     .login-form .form-group {
       margin-bottom: 1.2rem;
@@ -37,22 +39,24 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
+      color: #e0def4;
     }
     .login-form input {
       width: 100%;
       padding: 0.8rem;
-      border: 1px solid #ddd;
+      border: 1px solid #56526e;
       border-radius: 4px;
+      box-sizing: border-box;
     }
     .error-message {
-      color: #eb6f92;
+      color: #e74c3c;
       font-size: 0.9rem;
       margin-top: 0.5rem;
       display: none;
     }
     .login-btn {
       width: 100%;
-      background: #6c5ce7;
+      background: #3e8fb0;
       color: white;
       border: none;
       padding: 1rem;
@@ -62,7 +66,7 @@
       transition: background 0.3s;
     }
     .login-btn:hover {
-      background: #5549c0;
+      background: #9ccfd8;
     }
   </style>
 </head>
@@ -132,6 +136,27 @@
           errorMessage.style.display = 'block';
         }
       });
+
+      // Authentication check
+      (async () => {
+        try {
+          const response = await fetch('/api/auth/check', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const data = await response.json();
+
+          if (data.authenticated) {
+            // Redirect to main page if already authenticated
+            window.location.href = '/';
+          }
+        } catch (error) {
+          console.error('Authentication check error:', error);
+        }
+      })();
     });
   </script>
 </body>

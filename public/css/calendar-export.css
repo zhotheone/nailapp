@@ -1,0 +1,579 @@
+/* Modern Calendar Export Styles with Rose Pine Moon colors */
+
+/* Import Montserrat font with font display optimization */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap&display=swap&text=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ');
+
+/* Base variables for Rose Pine Moon color scheme with modernized additions */
+:root {
+  /* Rose Pine Moon colors */
+  --rp-base: #232136;
+  --rp-surface: #2a273f;
+  --rp-overlay: #393552;
+  --rp-muted: #6e6a86;
+  --rp-subtle: #908caa;
+  --rp-text: #e0def4;
+  --rp-love: #eb6f92;
+  --rp-gold: #f6c177;
+  --rp-rose: #ea9a97;
+  --rp-pine: #3e8fb0;
+  --rp-foam: #9ccfd8;
+  --rp-iris: #c4a7e7;
+  
+  /* Modern palette extensions */
+  --rp-love-transparent: rgba(235, 111, 146, 0.15);
+  --rp-foam-transparent: rgba(156, 207, 216, 0.15);
+  --rp-iris-transparent: rgba(196, 167, 231, 0.15);
+  --rp-gold-transparent: rgba(246, 193, 119, 0.15);
+  
+  /* Elevation shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --shadow-xl: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  
+  /* Modern spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typography */
+  --font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+}
+
+/* Base styles with modern reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Export container with glass morphism effect */
+.export-container {
+  font-family: var(--font-family);
+  margin: var(--space-6) 0;
+  color: var(--rp-text);
+  background-color: var(--rp-base);
+  background-image: 
+    radial-gradient(circle at top right, rgba(196, 167, 231, 0.03), transparent 70%),
+    radial-gradient(circle at bottom left, rgba(156, 207, 216, 0.03), transparent 70%);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(57, 53, 82, 0.5);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(4px);
+}
+
+/* Modern export button with animated gradient border */
+.export-btn {
+  position: relative;
+  font-family: var(--font-family);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--rp-surface);
+  color: var(--rp-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-5);
+  height: 48px;
+  min-width: 160px;
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.export-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-md);
+  padding: 2px;
+  background: linear-gradient(45deg, var(--rp-iris), var(--rp-rose), var(--rp-foam), var(--rp-gold));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--rp-overlay);
+}
+
+.export-btn:hover::before {
+  background-position: 100% 100%;
+  animation: borderGradient 2s linear infinite;
+}
+
+@keyframes borderGradient {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.export-btn:active {
+  transform: translateY(0);
+  background-color: var(--rp-surface);
+}
+
+.export-btn:disabled {
+  background-color: var(--rp-surface);
+  color: var(--rp-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.export-btn i, 
+.export-btn svg {
+  margin-right: var(--space-2);
+  font-size: 18px;
+}
+
+/* Modern animated loading spinner */
+.export-loading {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: var(--space-3);
+}
+
+.export-loading::before, 
+.export-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: pulse 2s linear infinite;
+}
+
+.export-loading::before {
+  border: 2px solid var(--rp-iris);
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+.export-loading::after {
+  border: 2px solid var(--rp-rose);
+  border-top-color: transparent;
+  animation: spin 1s linear infinite reverse;
+  scale: 0.8;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Modern glass card for preview container */
+.export-preview-container {
+  margin-top: var(--space-6);
+  background-color: rgba(42, 39, 63, 0.7);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid rgba(57, 53, 82, 0.8);
+  backdrop-filter: blur(10px);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.export-preview-container:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.export-preview-title {
+  position: relative;
+  font-family: var(--font-family);
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--rp-text);
+  border-bottom: 1px solid rgba(57, 53, 82, 0.8);
+  background-color: rgba(57, 53, 82, 0.5);
+  display: flex;
+  align-items: center;
+}
+
+.export-preview-title::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--rp-iris);
+  margin-right: var(--space-3);
+  box-shadow: 0 0 8px var(--rp-iris);
+}
+
+.export-preview {
+  width: 100%;
+  height: auto;
+  padding: var(--space-3);
+}
+
+/* Modern options panel */
+.export-options {
+  background: linear-gradient(145deg, rgba(42, 39, 63, 0.8), rgba(35, 33, 54, 0.8));
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid rgba(57, 53, 82, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.export-options-title {
+  font-family: var(--font-family);
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--rp-text);
+  border-bottom: 1px solid rgba(57, 53, 82, 0.5);
+  background-color: rgba(57, 53, 82, 0.3);
+  display: flex;
+  align-items: center;
+}
+
+.export-options-title::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--rp-rose);
+  margin-right: var(--space-3);
+  box-shadow: 0 0 8px var(--rp-rose);
+}
+
+.export-options-content {
+  padding: var(--space-5);
+}
+
+.export-option {
+  margin-bottom: var(--space-5);
+}
+
+/* Modern form fields */
+.export-option label {
+  font-family: var(--font-family);
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--rp-subtle);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.export-option input,
+.export-option select {
+  font-family: var(--font-family);
+  width: 100%;
+  height: 50px;
+  padding: 0 var(--space-4);
+  background-color: rgba(35, 33, 54, 0.5);
+  border: 1px solid rgba(57, 53, 82, 0.8);
+  border-radius: var(--radius-md);
+  color: var(--rp-text);
+  font-size: var(--font-size-md);
+  transition: all var(--transition-normal);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-option input:focus,
+.export-option select:focus {
+  border-color: var(--rp-iris);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--rp-iris-transparent), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-option input:hover:not(:focus),
+.export-option select:hover:not(:focus) {
+  border-color: var(--rp-subtle);
+}
+
+/* Modern week grid layout */
+.export-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* Modern day card with hover effects and animations */
+.export-day-card {
+  font-family: var(--font-family);
+  background: linear-gradient(145deg, rgba(42, 39, 63, 0.9), rgba(35, 33, 54, 0.9));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(57, 53, 82, 0.6);
+  position: relative;
+  backdrop-filter: blur(5px);
+}
+
+.export-day-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, transparent, var(--rp-iris), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.export-day-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.export-day-card:hover::before {
+  opacity: 1;
+}
+
+.export-day-card.today {
+  border: 2px solid var(--rp-rose);
+  box-shadow: 0 0 15px rgba(234, 154, 151, 0.2);
+}
+
+.export-day-card.weekend {
+  background: linear-gradient(145deg, rgba(42, 39, 63, 0.8), rgba(35, 33, 54, 0.8));
+  border-color: rgba(246, 193, 119, 0.3);
+}
+
+.export-day-header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid rgba(57, 53, 82, 0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, rgba(57, 53, 82, 0.8), rgba(42, 39, 63, 0.6));
+  position: relative;
+  overflow: hidden;
+}
+
+.export-day-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--rp-iris), transparent);
+}
+
+.export-day-number {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--rp-text);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.export-day-name {
+  font-size: var(--font-size-sm);
+  color: var(--rp-subtle);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.export-day-content {
+  padding: var(--space-4);
+  flex: 1;
+  overflow-y: auto;
+  max-height: 290px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rp-muted) transparent;
+}
+
+.export-day-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.export-day-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.export-day-content::-webkit-scrollbar-thumb {
+  background-color: var(--rp-muted);
+  border-radius: var(--radius-full);
+}
+
+/* Time slot cards with subtle hover animations */
+.export-time-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: rgba(57, 53, 82, 0.4);
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.export-time-slot::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  transition: all var(--transition-normal);
+}
+
+.export-time-slot:hover {
+  transform: translateX(5px);
+  box-shadow: var(--shadow-sm);
+}
+
+.export-time-slot.available {
+  background-color: var(--rp-foam-transparent);
+}
+
+.export-time-slot.available::before {
+  background-color: var(--rp-foam);
+  box-shadow: 0 0 8px var(--rp-foam);
+}
+
+.export-time-slot.booked {
+  background-color: var(--rp-love-transparent);
+}
+
+.export-time-slot.booked::before {
+  background-color: var(--rp-love);
+  box-shadow: 0 0 8px var(--rp-love);
+}
+
+.export-time-slot-time {
+  font-weight: 600;
+  margin-left: var(--space-3);
+  font-size: var(--font-size-md);
+  letter-spacing: 0.5px;
+}
+
+.export-time-status {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-normal);
+}
+
+.export-time-slot.available .export-time-status {
+  color: var(--rp-foam);
+  background-color: rgba(156, 207, 216, 0.1);
+}
+
+.export-time-slot.booked .export-time-status {
+  color: var(--rp-love);
+  background-color: rgba(235, 111, 146, 0.1);
+}
+
+/* Weekend message with animated glow */
+.export-weekend-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--rp-gold);
+  padding: var(--space-4);
+  text-align: center;
+  position: relative;
+}
+
+.export-weekend-message::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, var(--rp-gold-transparent) 0%, transparent 70%);
+  animation: pulseGlow 2s infinite alternate;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.8); }
+  100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+.export-weekend-icon {
+  font-size: 42px;
+  margin-bottom: var(--space-4);
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 5px 15px rgba(246, 193, 119, 0.3));
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Modern calendar container */
+.export-calendar-container {
+  --card-width: 400px;
+  --card-height: 450px;
+  --header-height: 120px;
+  
+  width: 100%;
+  max-width: 3000px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  background: linear-gradient(135deg, rgba(35, 33, 54, 0.95) 0%, rgba(42, 39, 63, 0.95) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}

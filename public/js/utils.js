@@ -124,10 +124,14 @@ function showMessage(type, message) {
     const fabOptions = document.querySelector('.fab-options');
     
     if (fabMain && fabOptions) {
-      // Додаємо обробник кліку на головну кнопку FAB
-      fabMain.addEventListener('click', (e) => {
+      // Clean up existing event listeners
+      fabMain.replaceWith(fabMain.cloneNode(true));
+      const newFabMain = document.querySelector('.fab-main');
+      
+      // Add event listeners to the new element
+      newFabMain.addEventListener('click', (e) => {
         e.stopPropagation(); // Запобігаємо поширенню події
-        fabMain.classList.toggle('active');
+        newFabMain.classList.toggle('active');
         fabOptions.classList.toggle('active');
       });
       
@@ -135,16 +139,22 @@ function showMessage(type, message) {
       document.addEventListener('click', (e) => {
         if (!e.target.closest('.fab-container') && 
             fabOptions.classList.contains('active')) {
-          fabMain.classList.remove('active');
+          newFabMain.classList.remove('active');
           fabOptions.classList.remove('active');
         }
       });
       
-      // Анімація показу опцій
+      // Animation for options
       const fabOptionElements = document.querySelectorAll('.fab-option');
-      fabOptionElements.forEach((option, index) => {
+      fabOptionElements.forEach((option) => {
         option.addEventListener('click', (e) => {
-          e.stopPropagation(); // Запобігаємо поширенню події
+          e.stopPropagation(); // Prevent event propagation
+          
+          // Close FAB menu after clicking an option
+          setTimeout(() => {
+            newFabMain.classList.remove('active');
+            fabOptions.classList.remove('active');
+          }, 300);
         });
       });
     }

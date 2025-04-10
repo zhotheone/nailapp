@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Check authentication status first
+  checkAuthentication();
+  
   // Initialize the router with all available routes
   router
     .register('/', 'appointments-page', initAppointmentsPage)
@@ -39,6 +42,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
   addLogoutButton();
 });
+
+/**
+ * Check if user is authenticated
+ */
+async function checkAuthentication() {
+  // Don't check on login page
+  if (window.location.pathname === '/login') {
+    return;
+  }
+  
+  try {
+    const response = await fetch('/api/auth/status');
+    
+    if (response.status === 401 || !response.ok) {
+      // Redirect to login if not authenticated
+      window.location.href = '/login';
+      return;
+    }
+    
+    const data = await response.json();
+    if (!data.authenticated) {
+      window.location.href = '/login';
+    }
+  } catch (error) {
+    console.error('Authentication check failed:', error);
+    // On error, redirect to login as a safety measure
+    window.location.href = '/login';
+  }
+}
 
 /**
  * Handle user logout

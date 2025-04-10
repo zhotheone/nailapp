@@ -1007,9 +1007,9 @@ body {
   box-shadow: var(--shadow-2);
   transform: translateY(20px);
   opacity: 0;
-  transition: transform var(--animation-speed-medium) cubic-bezier(0.68, -0.55, 0.27, 1.55), 
-              opacity var(--animation-speed-medium) ease, 
-              background-color var(--animation-speed-medium) ease;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              opacity 0.3s ease,
+              background-color 0.3s ease;
 }
 
 .fab-option:hover {
@@ -1064,6 +1064,25 @@ body {
 .fab-option i {
   color: var(--base);
   font-size: 1rem;
+}
+
+.logout-btn {
+  background-color: var(--danger-color);
+  color: var(--base);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.logout-btn:hover {
+  background-color: #d63031;
+  transform: translateY(-2px);
 }
 
 /* Empty State */
@@ -1519,7 +1538,7 @@ body {
 .frequent-client-info h3 {
   margin: 0;
   font-size: 1.1rem;
-  margin-right: var(--spacing-md);
+  margin-right: var (--spacing-md);
 }
 
 .procedure-price,

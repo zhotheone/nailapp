@@ -170,3 +170,49 @@
 {"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T14:20:20.984Z"}
 {"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T14:20:23.288Z"}
 {"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T14:20:23.292Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T18:22:05.990Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T18:22:05.990Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:22:11.715Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T18:25:30.625Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T18:25:30.625Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:25:33.861Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:25:34.054Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:25:34.888Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:25:35.084Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:25:53.217Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:25:53.426Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T18:28:01.267Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T18:28:01.268Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T18:35:21.215Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T18:35:21.215Z"}
+{"level":"info","message":"Cache hit for __express__/api/clients","timestamp":"2025-04-10T18:35:39.548Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T18:44:17.847Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T18:44:17.849Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T18:56:53.640Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T18:56:53.641Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:00:47.319Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:00:47.320Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:05:13.072Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:05:13.072Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:11:06.419Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:11:06.420Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:19:32.668Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:19:32.669Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:27:40.237Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:27:40.238Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:32:26.420Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:32:26.421Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:37:17.875Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:37:17.875Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T19:59:33.083Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T19:59:33.084Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T20:00:18.112Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T20:00:18.112Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T20:00:50.647Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T20:00:50.648Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T20:04:19.711Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T20:04:19.711Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T20:05:10.879Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T20:05:10.879Z"}
+{"level":"info","message":"Cache miss for __express__/api/clients","timestamp":"2025-04-10T20:12:19.119Z"}
+{"level":"info","message":"Fetching all clients","timestamp":"2025-04-10T20:12:19.119Z"}

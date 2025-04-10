@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['admin', 'user'],
-    default: 'user'
+    default: 'admin'
   },
   lastLogin: {
     type: Date,
@@ -44,7 +44,7 @@ UserSchema.pre('save', async function(next) {
   
   try {
     // Generate a salt
-    const salt = await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(10);
     // Hash the password along with the new salt
     this.password = await bcrypt.hash(this.password, salt);
     return next();
@@ -89,18 +89,27 @@ UserSchema.methods.resetLoginAttempts = function() {
 };
 
 // Create a static method to initialize with default admin if none exists
-UserSchema.statics.initializeAdmin = async function() {
-  const adminCount = await this.countDocuments({ role: 'admin' });
-  
-  if (adminCount === 0) {
-    // Create default admin user - you should change this password after first login!
-    await this.create({
-      username: 'admin',
-      password: process.env.ADMIN_PASSWORD || 'savika2024',
-      role: 'admin'
-    });
-    console.log('Admin user created successfully');
+UserSchema.statics.createAdminIfNoneExist = async function() {
+  try {
+    const adminCount = await this.countDocuments({ role: 'admin' });
+    
+    if (adminCount === 0) {
+      // Create default admin user - change this password after first login!
+      await this.create({
+        username: 'admin',
+        password: process.env.ADMIN_PASSWORD || 'savika2024',
+        role: 'admin'
+      });
+      console.log('Admin user created successfully');
+    }
+  } catch (error) {
+    console.error('Failed to create admin user:', error);
   }
+};
+
+// Add alias method to match what server.js is calling
+UserSchema.statics.initAdminUser = async function() {
+  return this.createAdminIfNoneExist();
 };
 
 const User = mongoose.model('User', UserSchema);
